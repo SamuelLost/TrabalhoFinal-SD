@@ -1,28 +1,26 @@
 package server;
 
-import com.trabalhoFinal.protos.Message;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
+import com.trabalhoFinal.protos.Message;
+
 public class UDPServer {
-    DatagramSocket aSocket;
-    Despachante despachante;
+    private static DatagramSocket aSocket;
+    private static Despachante despachante;
+    private static byte[] buffer = new byte[1000];
+    private static DatagramPacket request;
+    private static DatagramPacket reply;
 	public static void main(String args[]) {
 		aSocket = null;
 		try {
 			aSocket = new DatagramSocket(6789);
-			byte[] buffer = new byte[1000];
 			while (true) {
-				DatagramPacket request = new DatagramPacket(buffer, buffer.length);
-				aSocket.receive(request);
-
-                Connection c = new Connection(aSocket);
-
-				DatagramPacket reply = new DatagramPacket(request.getData(), 
-										request.getLength(), request.getAddress(), request.getPort());
-				aSocket.send(reply);
+                String request = new String(getRequest());
+                sendResponse(request);
+				
 			}
 		} catch (SocketException e) {
 			System.out.println("Socket: " + e.getMessage());
@@ -33,20 +31,18 @@ public class UDPServer {
 				aSocket.close();
 		}
 	}
-    public String getRequest() {
-        String request = "";
-        try {
-            request = dataIn.readUTF();
-        } catch (IOException e) {
-            System.out.println("IO Exception: " + e.getMessage());
-        }
-        return request;
+    public static byte[] getRequest() throws IOException {
+        request = new DatagramPacket(buffer, buffer.length);
+		aSocket.receive(request);
+        return request.getData();
     }
 
-    public void sendResponse(String request) {
+    public static void sendResponse(String requisicao) {
         try {
-            String response = despachante.invoke(request);
-            dataOut.writeUTF(response);
+            //String response = despachante.invoke(requisicao);
+            reply = new DatagramPacket(requisicao.getBytes(), 
+										request.getLength(), request.getAddress(), request.getPort());
+			aSocket.send(reply);
         } catch (IOException e) {
             System.out.println("IO Exception: " + e.getMessage());
         }

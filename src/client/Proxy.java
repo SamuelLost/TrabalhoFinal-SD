@@ -4,6 +4,10 @@ import com.google.protobuf.Message;
 import com.trabalhoFinal.protos.Contato;
 
 public class Proxy {
+    UDPClient client;
+    public Proxy() {
+        client = new UDPClient();
+    }
     public Contato addContato(String name, String adress, String email) {
 				
         return null;
