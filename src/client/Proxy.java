@@ -1,6 +1,7 @@
 package client;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.trabalhoFinal.protos.*;
 public class Proxy {
     UDPClient client;
@@ -48,18 +49,27 @@ public class Proxy {
         a.setMethodId(method);
         a.setArgs(ByteString.copyFrom(args));
         //Falta serializar
-        return null;
+        //Acho q isso é serializar        
+        return a.build().toByteArray();
     }
 
-    public Message desempacotaMessagem(byte[] resposta) {
-        return null;
+    //Tentativa de deserializar
+    public static byte[] desempacotaMessagem(byte[] resposta) {
+        try {
+            Message a = Message.parseFrom(resposta);
+            return a.getArgs().toByteArray();
+        } catch (InvalidProtocolBufferException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
     }
 
     //Falta desempacotar e ver o retorno
+    //v2 - acho q tá certo
 	public byte[] doOperation(String objectRef, String method, byte[] args) {
         byte[] requestEmpac = empacotaMensagem(objectRef, method, args);
         client.sendResquest(requestEmpac);
-        client.getResponse();
-		return null;
+        return desempacotaMessagem(client.getResponse());
 	}
 }
