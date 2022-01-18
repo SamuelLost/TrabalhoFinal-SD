@@ -2,33 +2,34 @@ package server;
 
 public class Esqueleto {
     private static Esqueleto uniqueInstance;
-
+    private static Agenda agenda;
+    
     private Esqueleto(){}
 
     public static synchronized Esqueleto getInstance() {
-        if (uniqueInstance == null)
+        if (uniqueInstance == null) {
             uniqueInstance = new Esqueleto();
+            agenda = new Agenda();
+        }
         return uniqueInstance;
     }
-
-
-
-    String addContato(String args){
+    
+    byte[] addContato(byte[] args){
         return "";
     }
-    String listarTodos(String args){
+    byte[] listarTodos(byte[] args){
         return "";
     }
-    String procContato(String args){
+    byte[] procContato(byte[] args){
         return "";
     }
-    String editContato(String args){
+    byte[] editContato(byte[] args){
         return "";
     }
-    String rmContato(String args){
+    byte[] rmContato(byte[] args){
         return "";
     }
-    String cleanAgenda(String args){
+    byte[] cleanAgenda(byte[] args){
         return "";
     }
 

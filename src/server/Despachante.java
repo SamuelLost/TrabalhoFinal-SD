@@ -14,13 +14,11 @@ public class Despachante {
         return uniqueInstance;
     }
 
-    //Não sei como prosseguir
     public byte[] invoke(byte[] request) {
-        byte[] aux = desempacotaServidor(request);
+        byte[] aux = desempacotaDatagrama(request);
         String req = new String(aux);
         String[] buff = req.split("");
         Esqueleto esqueleto = Esqueleto.getInstance();
-        //String response = "";
         switch (buff[0]) {
             case "add":
                 return esqueleto.addContato();
@@ -37,7 +35,7 @@ public class Despachante {
         }
     }
 
-    public byte[] desempacotaServidor(byte[] seila) {
+    private byte[] desempacotaDatagrama(byte[] seila) {
         try {
             Message a = Message.parseFrom(seila);
             

@@ -29,22 +29,11 @@ public class User {
 		switch (operacao) {
 		case 1: //Adicionar Contato
             Contato.Builder contato = Contato.newBuilder();
+            
             System.out.println("Digite o nome do Contato:");
-            //contato.setNome(stdin.readLine());
-            System.out.println("Digite o numero:");
-            //contato.setTelefone();
-            System.out.println("Digite o endereço:");
-            System.out.println("Digite o Email:");
-			// Interagir com o usuario via stdin.readLine() para setar
-			// argumentos de entada
-			// ex:
-			// System.out.println("Digite seu nome: ");
-			// person.setName(stdin.readLine());
-
-			// Por fim, chamar metodo do proxy correspondente à operação
-			// escolhida
-			// proxy.addPerson(person.build());
-
+            contato.setNome(stdin.readLine());
+            
+			proxy.addContato(contato.getNome(), "Rua Número Zero", "fake.mail@mail.com");
 			break;
 
 		case 2:

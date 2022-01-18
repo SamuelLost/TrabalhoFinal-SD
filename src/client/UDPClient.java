@@ -20,13 +20,10 @@ public class UDPClient {
             aHost = InetAddress.getByName("localhost");
             serverPort = 6789; 
         } catch (SocketException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.err.println("Error: " + e.getMessage());
         } catch (UnknownHostException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	System.err.println("Error: " + e.getMessage());
         }
-        
     }
 
     public void sendResquest(byte[] msg) {
@@ -34,19 +31,17 @@ public class UDPClient {
         try {
             socket.send(request);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	System.err.println("Error: " + e.getMessage());
         }
     }
 
     public byte[] getResponse() {
-        byte[] buffer = new byte[1000];
+        byte[] buffer = new byte[1024];
         reply = new DatagramPacket(buffer, buffer.length);
 		try {
             socket.receive(reply);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	System.err.println("Error: " + e.getMessage());
         }
         return reply.getData();
     }

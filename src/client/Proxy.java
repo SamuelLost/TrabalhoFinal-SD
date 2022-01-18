@@ -1,5 +1,7 @@
 package client;
 
+import java.util.Arrays;
+
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.trabalhoFinal.protos.*;
@@ -11,8 +13,8 @@ public class Proxy {
     }
     public Contato addContato(String name, String adress, String email) {
         String aux = name + "," + adress + "," + email;
-        byte[] args = aux.getBytes();
-        doOperation("Contato", "addContato", args);		
+        ByteString args = ByteString.copyFromUtf8(aux);
+        doOperation("Contato", "addContato", args);
         return null;
     }
 
@@ -40,34 +42,27 @@ public class Proxy {
 
     }
 
-    //Tentativa de empacotar
-    public byte[] empacotaMensagem(String objectRef, String method, byte[] args) {
+    public byte[] empacotaMensagem(String objectRef, String method, ByteString args) {
         Message.Builder a = Message.newBuilder();
-        a.setType(0); //0: requisição - 1: response
+        a.setType(0); //0: requisição - 1: resposta
         a.setId(id++);
         a.setObjReference(objectRef);
         a.setMethodId(method);
-        a.setArgs(ByteString.copyFrom(args));
-        //Falta serializar
-        //Acho q isso é serializar        
+        a.setArgs(args);
         return a.build().toByteArray();
     }
 
-    //Tentativa de deserializar
     public static byte[] desempacotaMessagem(byte[] resposta) {
+    	Message message = null;
         try {
-            Message a = Message.parseFrom(resposta);
-            return a.getArgs().toByteArray();
+            message = Message.parseFrom(resposta);
         } catch (InvalidProtocolBufferException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return null;
+            System.out.println("Error: " + e.getMessage());
         }
+        return message.toByteArray();
     }
 
-    //Falta desempacotar e ver o retorno
-    //v2 - acho q tá certo
-	public byte[] doOperation(String objectRef, String method, byte[] args) {
+	public byte[] doOperation(String objectRef, String method, ByteString args) {
         byte[] requestEmpac = empacotaMensagem(objectRef, method, args);
         client.sendResquest(requestEmpac);
         return desempacotaMessagem(client.getResponse());

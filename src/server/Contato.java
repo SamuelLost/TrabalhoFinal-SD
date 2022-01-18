@@ -11,16 +11,16 @@ public class Contato {
         this.endereco = endereco;
         this.email = email;
     }
-    public String getnome(){
+    public String getNome(){
         return nome;
     }
-    public String getfone(){
+    public String getFone(){
         return fone;
     }
-    public String getendereco(){
+    public String getEndereco(){
         return endereco;
     }
-    public String getemail(){
+    public String getEmail(){
         return email;
     }
     /*public boolean validar(String number){
