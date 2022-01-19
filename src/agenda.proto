@@ -38,7 +38,6 @@ message Contato {
   //google.protobuf.Timestamp last_updated = 5;
 }
 
-  
 message Agenda {
   repeated Contato contato = 1;
 }

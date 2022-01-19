@@ -6,6 +6,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/samuel/Downloads/protobuf-java-3.19.1.jar"/>
+	<classpathentry kind="lib" path="/home/danielvitor/Documentos/Faculdade/SistemasDistribuidos/protobuf-java-3.19.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

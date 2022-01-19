@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import com.trabalhoFinal.protos.Contato;
+import com.trabalhoFinal.protos.Contato.Endereco;
+import com.trabalhoFinal.protos.Contato.Telefone;
+import com.trabalhoFinal.protos.Contato.Email;
 
 import java.io.IOException;
 
@@ -27,13 +30,35 @@ public class User {
 		operacao = Integer.parseInt(opt);
 
 		switch (operacao) {
-		case 1: //Adicionar Contato
+		case 1:
             Contato.Builder contato = Contato.newBuilder();
             
             System.out.println("Digite o nome do Contato:");
             contato.setNome(stdin.readLine());
             
-			proxy.addContato(contato.getNome(), "Rua Número Zero", "fake.mail@mail.com");
+            System.out.println("Digite o telefone do Contato:");
+            Telefone.Builder telefone = Telefone.newBuilder();
+            telefone.setTelefone(stdin.readLine());
+            contato.addTelefone(telefone);
+            
+            System.out.println("Digite o endereço do Contato:");
+            Endereco.Builder endereco = Endereco.newBuilder();
+            endereco.setEndereco(stdin.readLine());
+            contato.addEndereco(endereco);
+            
+            System.out.println("Digite o email do Contato:");
+            Email.Builder email = Email.newBuilder();
+            email.setEmail(stdin.readLine());
+            contato.addEmails(email);
+            
+			Boolean retorno = proxy.addContato(contato.build());
+			
+			if (retorno) {
+				System.out.println("Contato cadastrado com sucesso");
+			} else {
+				System.out.println("Contato não cadastrado");
+			}
+			
 			break;
 
 		case 2:

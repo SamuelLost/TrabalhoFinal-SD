@@ -1,12 +1,17 @@
 package server;
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.trabalhoFinal.protos.Message;
+import com.trabalhoFinal.protos.Contato;
 
 public class Despachante {
     private static Despachante uniqueInstance;
-
-    private Despachante(){}
+    private static Esqueleto esqueleto;
+    
+    private Despachante(){
+    	esqueleto = Esqueleto.getInstance();
+    }
 
     public static synchronized Despachante getInstance() {
         if (uniqueInstance == null)
@@ -14,38 +19,25 @@ public class Despachante {
         return uniqueInstance;
     }
 
-    public byte[] invoke(byte[] request) {
-        byte[] aux = desempacotaDatagrama(request);
-        String req = new String(aux);
-        String[] buff = req.split("");
-        Esqueleto esqueleto = Esqueleto.getInstance();
-        switch (buff[0]) {
-            case "add":
-                return esqueleto.addContato();
+    public byte[] invoke(Message request) throws InvalidProtocolBufferException {
+    	String objReference = request.getObjReference();
+    	String methodName = request.getMethodId();
+    	int type = request.getType();
+    	ByteString args = request.getArgs();
+
+        switch (methodName) {
+            case "addContato":
+                return esqueleto.addContato(args);
             case "rm":
-                return esqueleto.rmContato();
+//                return esqueleto.rmContato();
             case "listar":
-                return esqueleto.listarTodos(args);
+//                return esqueleto.listarTodos(args);
             case "rmtodos":
-                return esqueleto.cleanAgenda(args);
+//                return esqueleto.cleanAgenda(args);
             case "procurar":
-                return esqueleto.procContato(args);    
+//                return esqueleto.procContato(args);    
             default:
                 return null;
-        }
-    }
-
-    private byte[] desempacotaDatagrama(byte[] seila) {
-        try {
-            Message a = Message.parseFrom(seila);
-            
-            String out = String.valueOf(a.getType()) + String.valueOf(a.getId()) + a.getObjReference()
-                + a.getMethodId() + a.getArgs().toString();
-            return out.getBytes();
-        } catch (InvalidProtocolBufferException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return null;
         }
     }
 }

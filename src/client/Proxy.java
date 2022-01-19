@@ -1,21 +1,25 @@
 package client;
 
-import java.util.Arrays;
-
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.trabalhoFinal.protos.*;
+
 public class Proxy {
     UDPClient client;
     int id = 0;
     public Proxy() {
         client = new UDPClient();
     }
-    public Contato addContato(String name, String adress, String email) {
-        String aux = name + "," + adress + "," + email;
-        ByteString args = ByteString.copyFromUtf8(aux);
-        doOperation("Contato", "addContato", args);
-        return null;
+    public Boolean addContato(Contato contato) throws InvalidProtocolBufferException {
+        ByteString args = ByteString.copyFrom(contato.toByteArray());
+
+        byte[] resp = doOperation("Agenda", "addContato", args);
+        
+        ByteString bs = ByteString.copyFrom(resp);
+        
+        Boolean ret = Boolean.valueOf(new String(bs.toByteArray()));
+        
+        return ret;
     }
 
     public Contato listarTodos() {
@@ -52,19 +56,22 @@ public class Proxy {
         return a.build().toByteArray();
     }
 
-    public static byte[] desempacotaMessagem(byte[] resposta) {
-    	Message message = null;
-        try {
-            message = Message.parseFrom(resposta);
-        } catch (InvalidProtocolBufferException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-        return message.toByteArray();
+    public static Message desempacotaMessagem(byte[] resposta) throws InvalidProtocolBufferException {
+    	Message message = Message.parseFrom(resposta);
+        return message;
     }
 
-	public byte[] doOperation(String objectRef, String method, ByteString args) {
+	public byte[] doOperation(String objectRef, String method, ByteString args) throws InvalidProtocolBufferException {
         byte[] requestEmpac = empacotaMensagem(objectRef, method, args);
+        
         client.sendResquest(requestEmpac);
-        return desempacotaMessagem(client.getResponse());
+
+        byte[] response = client.getResponse();
+        
+        Message message = desempacotaMessagem(response);
+        
+        System.out.println("Get response: " + response.length);
+        
+        return message.getArgs().toByteArray();
 	}
 }
