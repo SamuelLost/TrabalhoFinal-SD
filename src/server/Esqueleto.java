@@ -1,66 +1,50 @@
 package server;
 
+import java.io.IOException;
+
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.trabalhoFinal.protos.Contato;
-import com.trabalhoFinal.protos.Message;
+import com.trabalhoFinal.protos.AgendaProto.Agenda;
+import com.trabalhoFinal.protos.AgendaProto.Contato;
 
 public class Esqueleto {
     private static Esqueleto uniqueInstance;
-    private static Agenda agenda;
+    private static SistemaAgenda agenda;
     
     private Esqueleto(){}
 
     public static synchronized Esqueleto getInstance() {
         if (uniqueInstance == null) {
             uniqueInstance = new Esqueleto();
-            agenda = new Agenda();
+            agenda = new SistemaAgenda();
         }
         return uniqueInstance;
     }
     
-    byte[] addContato(ByteString args) throws InvalidProtocolBufferException{    	
+    ByteString addContato(ByteString args) throws IOException {
     	Contato contato = Contato.parseFrom(args.toByteArray());
-    	
-    	Contato.Telefone[] telefone = new Contato.Telefone[contato.getTelefoneCount()];
-    	for (int i = 0; i < contato.getTelefoneCount(); i++) {
-    		telefone[i] = contato.getTelefone(i);
-    	}
-    	
-    	Contato.Endereco[] endereco = new Contato.Endereco[contato.getEnderecoCount()];
-    	for (int i = 0; i < contato.getEnderecoCount(); i++) {
-    		endereco[i] = contato.getEndereco(i);
-    	}
-    	
-    	Contato.Email[] emails = new Contato.Email[contato.getEmailsCount()];
-    	for (int i = 0; i < contato.getEmailsCount(); i++) {
-    		emails[i] = contato.getEmails(i);
-    	}
-    	
-    	Boolean resp = agenda.addContato(contato.getNome(), telefone, endereco, emails);
-    	
-    	Message.Builder message = Message.newBuilder();
-    	message.setType(1); //0: requisição - 1: resposta
-    	message.setId(0);
-    	message.setObjReference("");
-    	message.setMethodId("");
-    	message.setArgs(ByteString.copyFromUtf8(Boolean.toString(resp)));
-    	
-    	return message.build().toByteArray();
+
+    	Boolean response = agenda.addContato(contato);
+
+    	return ByteString.copyFrom(response.toString().getBytes());
     }
-    byte[] listarTodos(byte[] args){
+    ByteString listarTodos(ByteString args) throws IOException {
+    	Agenda agenda_response = agenda.listarContato();
+
+    	return ByteString.copyFrom(agenda_response.toByteArray());
+    }
+    ByteString procContato(ByteString args) throws IOException{
+    	Agenda agenda_response = agenda.buscarContato(new String(args.toByteArray()));
+
+    	return ByteString.copyFrom(agenda_response.toByteArray());
+    }
+    byte[] editContato(ByteString args){
     	return null;
     }
-    byte[] procContato(byte[] args){
+    byte[] rmContato(ByteString args){
     	return null;
     }
-    byte[] editContato(byte[] args){
-    	return null;
-    }
-    byte[] rmContato(byte[] args){
-    	return null;
-    }
-    byte[] cleanAgenda(byte[] args){
+    byte[] cleanAgenda(ByteString args){
     	return null;
     }
 

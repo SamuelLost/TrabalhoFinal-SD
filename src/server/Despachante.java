@@ -1,9 +1,9 @@
 package server;
 
+import java.io.IOException;
+
 import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.trabalhoFinal.protos.Message;
-import com.trabalhoFinal.protos.Contato;
+import com.trabalhoFinal.protos.MessageProto.Message;
 
 public class Despachante {
     private static Despachante uniqueInstance;
@@ -19,23 +19,18 @@ public class Despachante {
         return uniqueInstance;
     }
 
-    public byte[] invoke(Message request) throws InvalidProtocolBufferException {
-    	String objReference = request.getObjReference();
-    	String methodName = request.getMethodId();
-    	int type = request.getType();
-    	ByteString args = request.getArgs();
-
-        switch (methodName) {
+    public ByteString invoke(Message request) throws IOException {
+        switch (request.getMethodId()) {
             case "addContato":
-                return esqueleto.addContato(args);
+                return esqueleto.addContato(request.getArgs());
+            case "listarContatos":
+                return esqueleto.listarTodos(request.getArgs());
+            case "buscarContatos":
+              return esqueleto.procContato(request.getArgs());
             case "rm":
-//                return esqueleto.rmContato();
-            case "listar":
-//                return esqueleto.listarTodos(args);
+//              return esqueleto.rmContato();
             case "rmtodos":
-//                return esqueleto.cleanAgenda(args);
-            case "procurar":
-//                return esqueleto.procContato(args);    
+//                return esqueleto.cleanAgenda(args);    
             default:
                 return null;
         }

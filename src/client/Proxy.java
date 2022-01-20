@@ -1,59 +1,94 @@
 package client;
 
+import java.util.List;
+
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.trabalhoFinal.protos.*;
+import com.trabalhoFinal.protos.MessageProto.Message;
+import com.trabalhoFinal.protos.AgendaProto.Agenda;
+import com.trabalhoFinal.protos.AgendaProto.Contato;
 
 public class Proxy {
     UDPClient client;
-    int id = 0;
+    int requestId;
+
     public Proxy() {
         client = new UDPClient();
+        requestId = 0;
     }
+    
+    // retorna true se adicionar, false se já existir contato com o mesmo nome
     public Boolean addContato(Contato contato) throws InvalidProtocolBufferException {
         ByteString args = ByteString.copyFrom(contato.toByteArray());
 
         byte[] resp = doOperation("Agenda", "addContato", args);
         
-        ByteString bs = ByteString.copyFrom(resp);
+        ByteString byteString = ByteString.copyFrom(resp);
         
-        Boolean ret = Boolean.valueOf(new String(bs.toByteArray()));
+        Boolean response = Boolean.valueOf(new String(byteString.toByteArray()));
         
-        return ret;
+        return response;
     }
 
-    public Contato listarTodos() {
-        return null;
+    // retorna lista com os contatos
+    public List<Contato> listarTodos() throws InvalidProtocolBufferException {
+    	byte[] resp = doOperation("Agenda", "listarContatos", ByteString.copyFrom("vazio".getBytes()));
+
+    	ByteString byteString = ByteString.copyFrom(resp);
+    	
+    	Agenda agenda_response = Agenda.parseFrom(byteString);
+    	
+    	List<Contato> listaContatos = agenda_response.getContatosList(); 
+    	
+        return listaContatos;
     }
 
-    public Contato procContato(String busca) {
-        return null;
+    // retorna lista com os contatos que se encaixam na busca
+    public List<Contato> procContato(String busca) throws InvalidProtocolBufferException {
+    	byte[] resp = doOperation("Agenda", "buscarContatos", ByteString.copyFrom(busca.getBytes()));
+
+    	ByteString byteString = ByteString.copyFrom(resp);
+    	
+    	Agenda agenda_response = Agenda.parseFrom(byteString);
+    	
+    	List<Contato> listaContatos = agenda_response.getContatosList(); 
+    	
+        return listaContatos;
     }
 
-    public boolean editContato(String name, String adress, String telefone, String email) {
+    // retorna true se conseguir editar, falso caso o contato não exista
+    public Boolean editarContato(Contato contato) throws InvalidProtocolBufferException {
         return true;
     }
 
-    public String rmContato(String name) {
-        return "";
+    // retorna true caso consiga remover o contato, falto caso o contato não exista
+    public Boolean removerContato(String nome) {
+        return true;
     }
 
-    public void cleanAgenda() {
+    // limpar os contatos, não retorna nada
+    public void limparAgenda() {
 
     }
 
+    // finaliza o cliente udp
     public void finaliza() {
-
+    	client.close();
     }
 
     public byte[] empacotaMensagem(String objectRef, String method, ByteString args) {
-        Message.Builder a = Message.newBuilder();
-        a.setType(0); //0: requisição - 1: resposta
-        a.setId(id++);
-        a.setObjReference(objectRef);
-        a.setMethodId(method);
-        a.setArgs(args);
-        return a.build().toByteArray();
+        Message.Builder message = Message.newBuilder();
+        message.setType(0);  // 0 -> request
+
+        message.setId(requestId++);
+        
+        message.setObjReference(objectRef);
+        
+        message.setMethodId(method);
+        
+        message.setArgs(args);
+        
+        return message.build().toByteArray();
     }
 
     public static Message desempacotaMessagem(byte[] resposta) throws InvalidProtocolBufferException {
@@ -61,17 +96,15 @@ public class Proxy {
         return message;
     }
 
-	public byte[] doOperation(String objectRef, String method, ByteString args) throws InvalidProtocolBufferException {
-        byte[] requestEmpac = empacotaMensagem(objectRef, method, args);
+	public byte[] doOperation(String objectRef, String methodId, ByteString args) throws InvalidProtocolBufferException {
+        byte[] bytes_request = empacotaMensagem(objectRef, methodId, args);
         
-        client.sendResquest(requestEmpac);
+        client.sendResquest(bytes_request);
 
-        byte[] response = client.getResponse();
+        byte[] bytes_response = client.getResponse();
         
-        Message message = desempacotaMessagem(response);
+        Message response_message = desempacotaMessagem(bytes_response);
         
-        System.out.println("Get response: " + response.length);
-        
-        return message.getArgs().toByteArray();
+        return response_message.getArgs().toByteArray();
 	}
 }

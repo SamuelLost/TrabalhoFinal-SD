@@ -2,11 +2,11 @@ package client;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.List;
 
-import com.trabalhoFinal.protos.Contato;
-import com.trabalhoFinal.protos.Contato.Endereco;
-import com.trabalhoFinal.protos.Contato.Telefone;
-import com.trabalhoFinal.protos.Contato.Email;
+import com.trabalhoFinal.protos.MessageProto.Message;
+import com.trabalhoFinal.protos.AgendaProto.Contato;
+import com.trabalhoFinal.protos.AgendaProto.Contato.*;
 
 import java.io.IOException;
 
@@ -17,20 +17,17 @@ public class User {
         proxy = new Proxy();
     }
 
-    public int selecionaOperacao() throws IOException {
-
-		int operacao = 0;
-
+    public String selecionaOperacao() throws IOException {
 		BufferedReader stdin = new BufferedReader(new InputStreamReader(
 				System.in));
 		String opt = null;
 		do {
 			opt = stdin.readLine();
 		} while (opt.equals("\n") || opt.equals("") || opt.isEmpty());
-		operacao = Integer.parseInt(opt);
 
-		switch (operacao) {
-		case 1:
+		switch (opt) {
+		case "1":
+		{
             Contato.Builder contato = Contato.newBuilder();
             
             System.out.println("Digite o nome do Contato:");
@@ -39,44 +36,84 @@ public class User {
             System.out.println("Digite o telefone do Contato:");
             Telefone.Builder telefone = Telefone.newBuilder();
             telefone.setTelefone(stdin.readLine());
-            contato.addTelefone(telefone);
+            contato.addTelefones(telefone);
             
             System.out.println("Digite o endereço do Contato:");
             Endereco.Builder endereco = Endereco.newBuilder();
             endereco.setEndereco(stdin.readLine());
-            contato.addEndereco(endereco);
+            contato.addEnderecos(endereco);
             
             System.out.println("Digite o email do Contato:");
             Email.Builder email = Email.newBuilder();
             email.setEmail(stdin.readLine());
             contato.addEmails(email);
             
-			Boolean retorno = proxy.addContato(contato.build());
-			
-			if (retorno) {
+			if (proxy.addContato(contato.build())) {
 				System.out.println("Contato cadastrado com sucesso");
 			} else {
-				System.out.println("Contato não cadastrado");
+				System.out.println("Sem sucesso. Contato já existe");
 			}
 			
 			break;
-
-		case 2:
-
+		}
+		case "2":
+		{
+			List<Contato> listaContatos = proxy.listarTodos();
+			for (Contato _contato : listaContatos) {
+				System.out.println("Nome: " + _contato.getNome());
+				System.out.println("Telefones: ");
+				for (Telefone tel : _contato.getTelefonesList()) {
+					System.out.println("- " + tel.getTelefone() + " " + tel.getType());
+				}
+				System.out.println("Endereços: ");
+				for (Endereco end : _contato.getEnderecosList()) {
+					System.out.println("- " + end.getEndereco() + " " + end.getType());
+				}
+				System.out.println("E-mails: ");
+				for (Email end : _contato.getEmailsList()) {
+					System.out.println("- " + end.getEmail() + " " + end.getType());
+				}
+			}
+		}
 			break;
 
-		case 3:
+		case "3":
+		{
+			System.out.println("Digite sua busca");
+			String busca = stdin.readLine();
+			
+			List<Contato> listaContatos = proxy.procContato(busca);
+			
+			System.out.println("Quantidade: " + listaContatos.size());
+			
+			for (Contato _contato : listaContatos) {
+				System.out.println("Nome: " + _contato.getNome());
+				System.out.println("Telefones: ");
+				for (Telefone tel : _contato.getTelefonesList()) {
+					System.out.println("- " + tel.getTelefone() + " " + tel.getType());
+				}
+				System.out.println("Endereços: ");
+				for (Endereco end : _contato.getEnderecosList()) {
+					System.out.println("- " + end.getEndereco() + " " + end.getType());
+				}
+				System.out.println("E-mails: ");
+				for (Email end : _contato.getEmailsList()) {
+					System.out.println("- " + end.getEmail() + " " + end.getType());
+				}
+			}
+		}
 			break;
-
-		case 0:
+		case "0":
+			System.out.println("Finalizando aplicação");
 			proxy.finaliza();
+			opt = "exit";
 			break;
 
 		default:
-			System.out.println("Operação invalida, tente outra.");
+			System.out.println("Operação invalida, tente novamente");
 			break;
 		}
-		return operacao;
+		return opt;
     }    
     public void printMenu() {
 		System.out.println("\nDigite o n# da operação que deseja executar: ");
@@ -89,7 +126,7 @@ public class User {
 	}
     public static void main(String[] args) {
         User bookClient = new User();
-		int operacao = -1;
+		String operacao = "exit";
 		do {
 			bookClient.printMenu();
 			try {
@@ -97,6 +134,6 @@ public class User {
 			} catch (IOException ex) {
 				System.out.println("Escolha uma das operações pelo número");
 			}
-		} while (operacao != 0);
+		} while (!operacao.equals("exit"));
     }
 }
