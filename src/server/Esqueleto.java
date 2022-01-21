@@ -38,13 +38,15 @@ public class Esqueleto {
 
     	return ByteString.copyFrom(agenda_response.toByteArray());
     }
-    byte[] editContato(ByteString args){
+    ByteString editContato(ByteString args){
     	return null;
     }
-    byte[] rmContato(ByteString args){
-    	return null;
+    ByteString removerContato(ByteString args) throws IOException{
+    	Boolean response = agenda.removerContato(new String(args.toByteArray()));
+    	
+    	return ByteString.copyFrom(response.toString().getBytes());
     }
-    byte[] cleanAgenda(ByteString args){
+    ByteString cleanAgenda(ByteString args){
     	return null;
     }
 

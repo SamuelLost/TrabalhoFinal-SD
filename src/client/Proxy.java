@@ -62,8 +62,16 @@ public class Proxy {
     }
 
     // retorna true caso consiga remover o contato, falto caso o contato não exista
-    public Boolean removerContato(String nome) {
-        return true;
+    public Boolean removerContato(String nome) throws InvalidProtocolBufferException {
+        ByteString args = ByteString.copyFrom(nome.getBytes());
+
+        byte[] resp = doOperation("Agenda", "removerContato", args);
+        
+        ByteString byteString = ByteString.copyFrom(resp);
+        
+        Boolean response = Boolean.valueOf(new String(byteString.toByteArray()));
+        
+        return response;
     }
 
     // limpar os contatos, não retorna nada

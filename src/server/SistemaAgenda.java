@@ -13,8 +13,6 @@ import com.trabalhoFinal.protos.AgendaProto.Contato.Email;
 
 public class SistemaAgenda {    
     private static final String FILENAME = "agenda.txt"; 
-	
-	SistemaAgenda() {}
     
 	private FileInputStream lerArquivoEntrada() throws FileNotFoundException {
 		FileInputStream inputStream = new FileInputStream(FILENAME);
@@ -119,17 +117,38 @@ public class SistemaAgenda {
         return agenda_retorno.build();
     }
 
-//    // public Boolean ediContato(Contato contato, ){return false;}
-//    public Boolean rmContato(String nome) {
-//        for (Contato contato : agenda) {
-//            if (contato.getNome() == nome) {
-//                agenda.remove(contato);
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//
+    public Boolean removerContato(String nome) throws IOException {
+    	Agenda.Builder agenda_retorno = Agenda.newBuilder();
+    	
+    	Agenda.Builder agenda = Agenda.newBuilder();
+    	
+    	// ler arquivo
+    	FileInputStream inputStream = lerArquivoEntrada();
+
+		// Lê do arquivo e salva em agenda
+		agenda.mergeFrom(inputStream);
+
+		// fechar arquivo
+		inputStream.close();
+		
+		for (Contato contato : agenda.getContatosList()) {
+			if (!contato.getNome().equals(nome)) {
+				agenda_retorno.addContatos(contato);
+			}
+		}
+		
+    	// ler arquivo
+    	FileOutputStream outputStream = lerArquivoSaida();
+
+		// Lê da agenda e salva no arquivo
+    	agenda_retorno.build().writeTo(outputStream);
+
+		// fechar arquivo
+		outputStream.close();
+    	
+    	return (agenda.build().getContatosCount() == agenda_retorno.build().getContatosCount() ? false : true);
+    }
+
 //    public void cleanAgenda() {
 //        agenda.clear();
 //    }

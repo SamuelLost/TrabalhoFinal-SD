@@ -27,8 +27,8 @@ public class Despachante {
                 return esqueleto.listarTodos(request.getArgs());
             case "buscarContatos":
               return esqueleto.procContato(request.getArgs());
-            case "rm":
-//              return esqueleto.rmContato();
+            case "removerContato":
+              return esqueleto.removerContato(request.getArgs());
             case "rmtodos":
 //                return esqueleto.cleanAgenda(args);    
             default:

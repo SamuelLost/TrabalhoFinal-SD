@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import com.trabalhoFinal.protos.MessageProto.Message;
 import com.trabalhoFinal.protos.AgendaProto.Contato;
 import com.trabalhoFinal.protos.AgendaProto.Contato.*;
 
@@ -103,6 +102,18 @@ public class User {
 			}
 		}
 			break;
+		case "5":
+		{
+			System.out.println("Digite o nome para remover");
+			String nome = stdin.readLine();
+			Boolean result = proxy.removerContato(nome);
+			if (result) {
+				System.out.println("Contato removido com sucesso");
+			} else {
+				System.out.println("Contato não removido");
+			}
+		}
+		break;
 		case "0":
 			System.out.println("Finalizando aplicação");
 			proxy.finaliza();
@@ -121,7 +132,8 @@ public class User {
 		System.out.println("2 - Listar Contatos");
 		System.out.println("3 - Procurar Contato");
         System.out.println("4 - Editar Contato");
-        System.out.println("5 - Limpar Agenda");
+        System.out.println("5 - Remover Contato");
+        System.out.println("6 - Limpar Agenda");
 		System.out.println("0 - Sair\n");
 	}
     public static void main(String[] args) {
