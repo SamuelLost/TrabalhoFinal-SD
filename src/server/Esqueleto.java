@@ -22,6 +22,7 @@ public class Esqueleto {
     }
     
     ByteString addContato(ByteString args) throws IOException {
+
     	Contato contato = Contato.parseFrom(args.toByteArray());
 
     	Boolean response = agenda.addContato(contato);
@@ -38,16 +39,21 @@ public class Esqueleto {
 
     	return ByteString.copyFrom(agenda_response.toByteArray());
     }
-    ByteString editContato(ByteString args){
-    	return null;
-    }
+    /*ByteString editContato(ByteString args) throws InvalidProtocolBufferException {
+        Contato contato = Contato.parseFrom(args.toByteArray());
+
+        Boolean response = agenda.addContato(contato);
+
+        return ByteString.copyFrom(response.toString().getBytes());
+    }*/
     ByteString removerContato(ByteString args) throws IOException{
     	Boolean response = agenda.removerContato(new String(args.toByteArray()));
     	
     	return ByteString.copyFrom(response.toString().getBytes());
     }
-    ByteString cleanAgenda(ByteString args){
-    	return null;
+    ByteString cleanAgenda(ByteString args) throws IOException {
+        Boolean response = agenda.cleanAgenda();
+        return ByteString.copyFrom(response.toString().getBytes());
     }
 
 }

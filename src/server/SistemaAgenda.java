@@ -118,10 +118,7 @@ public class SistemaAgenda {
     }
 
     public Boolean removerContato(String nome) throws IOException {
-    	Agenda.Builder agenda_retorno = Agenda.newBuilder();
-    	
-    	Agenda.Builder agenda = Agenda.newBuilder();
-    	
+		Agenda.Builder agenda = Agenda.newBuilder();
     	// ler arquivo
     	FileInputStream inputStream = lerArquivoEntrada();
 
@@ -130,27 +127,82 @@ public class SistemaAgenda {
 
 		// fechar arquivo
 		inputStream.close();
-		
+		int index=0;
 		for (Contato contato : agenda.getContatosList()) {
-			if (!contato.getNome().equals(nome)) {
-				agenda_retorno.addContatos(contato);
+			if (contato.getNome().equals(nome)) {
+				agenda.removeContatos(index);
+				// ler arquivo
+				FileOutputStream outputStream = lerArquivoSaida();
+
+				// Lê da agenda e salva no arquivo
+				agenda.build().writeTo(outputStream);
+
+				// fechar arquivo
+				outputStream.close();
+				return true;
+			}
+			index++;
+		}
+    	return false;
+    }
+
+   public Boolean cleanAgenda() throws IOException {
+	   Agenda.Builder agenda = Agenda.newBuilder();
+
+	   // ler arquivo
+	   FileInputStream inputStream = lerArquivoEntrada();
+
+	   // Lê do arquivo e salva em agenda
+	   agenda.mergeFrom(inputStream);
+
+	   // fechar arquivo
+	   inputStream.close();
+
+
+
+	   // ler arquivo
+	  FileOutputStream outputStream = lerArquivoSaida();
+	   agenda.clearContatos();
+		agenda.build().writeTo(outputStream);
+	   // fechar arquivo
+		 outputStream.close();
+	   if (agenda.build().getContatosCount()==0) return true;
+	   else return false;
+	}
+	/*
+	public Boolean editContato(Contato contato) throws IOException {
+		Agenda.Builder agenda = Agenda.newBuilder();
+
+		// ler arquivo
+		FileInputStream inputStream = lerArquivoEntrada();
+
+		// Lê do arquivo e salva em agenda
+		agenda.mergeFrom(inputStream);
+
+		// fechar arquivo
+		inputStream.close();
+
+		Boolean result = true;
+		for (Contato _contato : agenda.getContatosList()) {
+			if () {
+				result = false;
 			}
 		}
-		
-    	// ler arquivo
-    	FileOutputStream outputStream = lerArquivoSaida();
+
+		// adiciona novo contato
+		if (result) {
+			agenda.addContatos(contato);
+		}
+
+		// ler arquivo
+		FileOutputStream outputStream = lerArquivoSaida();
 
 		// Lê da agenda e salva no arquivo
-    	agenda_retorno.build().writeTo(outputStream);
+		agenda.build().writeTo(outputStream);
 
 		// fechar arquivo
 		outputStream.close();
-    	
-    	return (agenda.build().getContatosCount() == agenda_retorno.build().getContatosCount() ? false : true);
-    }
 
-//    public void cleanAgenda() {
-//        agenda.clear();
-//    }
-
+		return result;
+	}*/
 }
