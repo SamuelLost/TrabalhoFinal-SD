@@ -1,5 +1,7 @@
 package client;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import com.google.protobuf.ByteString;
@@ -32,7 +34,7 @@ public class Proxy {
 
     // retorna lista com os contatos
     public List<Contato> listarTodos() throws InvalidProtocolBufferException {
-    	byte[] resp = doOperation("Agenda", "listarContatos", ByteString.copyFrom("vazio".getBytes()));
+    	byte[] resp = doOperation("Agenda", "listarContatos", ByteString.copyFrom("".getBytes()));
 
     	ByteString byteString = ByteString.copyFrom(resp);
     	
@@ -45,7 +47,7 @@ public class Proxy {
 
     // retorna lista com os contatos que se encaixam na busca
     public List<Contato> procContato(String busca) throws InvalidProtocolBufferException {
-    	byte[] resp = doOperation("Agenda", "buscarContatos", ByteString.copyFrom(busca.getBytes()));
+        byte[] resp = doOperation("Agenda", "buscarContatos", ByteString.copyFrom(busca.getBytes()));
 
     	ByteString byteString = ByteString.copyFrom(resp);
     	
@@ -57,9 +59,18 @@ public class Proxy {
     }
 
     // retorna true se conseguir editar, falso caso o contato não exista
-    public Boolean editarContato(Contato contato) throws InvalidProtocolBufferException {
-        return true;
-    }
+    /*public Boolean editarContato(Contato contato) throws InvalidProtocolBufferException {
+
+        ByteString args = ByteString.copyFrom(contato.toByteArray());
+
+        byte[] resp = doOperation("Agenda", "editarContato", args);
+
+        ByteString byteString = ByteString.copyFrom(resp);
+
+        Boolean response = Boolean.valueOf(new String(byteString.toByteArray()));
+
+        return response;
+    }*/
 
     // retorna true caso consiga remover o contato, falto caso o contato não exista
     public Boolean removerContato(String nome) throws InvalidProtocolBufferException {
@@ -75,8 +86,15 @@ public class Proxy {
     }
 
     // limpar os contatos, não retorna nada
-    public void limparAgenda() {
+    public Boolean limparAgenda() throws InvalidProtocolBufferException {
+        ByteString args = ByteString.copyFrom(("remove").getBytes());
+        byte[] resp = doOperation("Agenda", "cleanAgenda", args);
 
+        ByteString byteString = ByteString.copyFrom(resp);
+
+        Boolean response = Boolean.valueOf(new String(byteString.toByteArray()));
+
+        return response;
     }
 
     // finaliza o cliente udp
