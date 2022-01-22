@@ -1,7 +1,8 @@
 package client;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.List;
 
 import com.google.protobuf.ByteString;
@@ -11,6 +12,7 @@ import com.trabalhoFinal.protos.AgendaProto.Agenda;
 import com.trabalhoFinal.protos.AgendaProto.Contato;
 
 public class Proxy {
+	final int MAX_ENVIOS = 10;
     UDPClient client;
     int requestId;
 
@@ -117,20 +119,49 @@ public class Proxy {
         return message.build().toByteArray();
     }
 
-    public static Message desempacotaMessagem(byte[] resposta) throws InvalidProtocolBufferException {
-    	Message message = Message.parseFrom(resposta);
+    public static Message desempacotaMensagem(byte[] resposta) {
+    	Message message = null;
+		try {
+			message = Message.parseFrom(resposta);
+		} catch (InvalidProtocolBufferException e) {
+			System.out.println("InvalidProtocolBufferException " + e.getMessage());
+		}
         return message;
     }
 
-	public byte[] doOperation(String objectRef, String methodId, ByteString args) throws InvalidProtocolBufferException {
-        byte[] bytes_request = empacotaMensagem(objectRef, methodId, args);
-        
-        client.sendResquest(bytes_request);
+	public byte[] doOperation(String objectRef, String methodId, ByteString args) {
+        try {
+        	byte[] bytes_request = empacotaMensagem(objectRef, methodId, args);
+            
+            client.sendResquest(bytes_request);
+            
+            Message response_message = null;
+            byte[] bytes_response = null;
+            
+            int qtd_envios = 1;
+            
+            while (qtd_envios <= MAX_ENVIOS) {
+            	client.socket.setSoTimeout(1500);
+            	try {
+            		bytes_response = client.getResponse();
+            		response_message = desempacotaMensagem(bytes_response);
+            		
+            		if (response_message.getId() == (requestId - 1)) {
+            			return response_message.getArgs().toByteArray();
+            		}
+            	} catch (SocketTimeoutException e) {
+					System.out.println("SocketTimeoutException " + e.getMessage());
+					client.sendResquest(bytes_request);
+					qtd_envios++;
+            	} catch (IOException e) {
+            		System.out.println("IOException " + e.getMessage());
+				}
+            }
 
-        byte[] bytes_response = client.getResponse();
+        } catch(SocketException e) {
+        	System.out.println("SocketException " + e.getMessage());
+        }
         
-        Message response_message = desempacotaMessagem(bytes_response);
-        
-        return response_message.getArgs().toByteArray();
+        return "Servidor morreu".getBytes();
 	}
 }

@@ -8,7 +8,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 public class UDPClient {
-    private DatagramSocket socket;
+    protected DatagramSocket socket;
     private InetAddress aHost;
     private int serverPort;
     private DatagramPacket request;
@@ -17,6 +17,7 @@ public class UDPClient {
     public UDPClient() {
         try {
             socket = new DatagramSocket();
+            socket.setSoTimeout(2000);
             aHost = InetAddress.getByName("localhost");
             serverPort = 6789; 
         } catch (SocketException e) {
@@ -35,14 +36,11 @@ public class UDPClient {
         }
     }
 
-    public byte[] getResponse() {
+    public byte[] getResponse() throws IOException {
         byte[] buffer = new byte[1024];
         reply = new DatagramPacket(buffer, buffer.length);
-		try {
-            socket.receive(reply);
-        } catch (IOException e) {
-        	System.err.println("Error: " + e.getMessage());
-        }
+        socket.receive(reply);
+        
 		byte[] aux = new byte[reply.getLength()];
 		for (int i = 0; i < reply.getLength(); i++) {
 			aux[i] = reply.getData()[i];

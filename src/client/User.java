@@ -15,6 +15,11 @@ public class User {
 	Scanner scanner = new Scanner(System.in);
 	String input;
     
+	public static void limpaTela() {
+		System.out.print("\033[H\033[2J");
+		System.out.flush();
+	}
+	
     public User(){
         proxy = new Proxy();
     }
@@ -26,10 +31,11 @@ public class User {
 		do {
 			opt = stdin.readLine();
 		} while (opt.equals("\n") || opt.equals("") || opt.isEmpty());
-
+		
 		switch (opt) {
 		case "1": //addContato
 		{
+			limpaTela();
             Contato.Builder contato = Contato.newBuilder();
 			String type;
             
@@ -77,12 +83,12 @@ public class User {
 			System.out.println("Aperte Enter para voltar ao menu...");
 			input = scanner.nextLine();
 
-			System.out.print("\033[H\033[2J");//Runtime.getRuntime().exec("clear");
-			System.out.flush();
+			limpaTela();
 			break;
 		}
 		case "2": //listarContatos
 		{
+			limpaTela();
 			List<Contato> listaContatos = proxy.listarTodos();
 			for (Contato _contato : listaContatos) {
 				System.out.println("Nome: " + _contato.getNome());
@@ -103,8 +109,7 @@ public class User {
 			System.out.println("Aperte Enter para voltar ao menu...");
 			input = scanner.nextLine();
 
-			System.out.print("\033[H\033[2J");//Runtime.getRuntime().exec("clear");
-			System.out.flush();
+			limpaTela();
 
 			break;
 		}
@@ -112,6 +117,7 @@ public class User {
 
 		case "3": //procContatos
 		{
+			limpaTela();
 			System.out.println("Digite sua busca");
 			String busca = stdin.readLine();
 
@@ -137,12 +143,12 @@ public class User {
 			System.out.println("Aperte Enter para voltar ao menu...");
 			input = scanner.nextLine();
 
-			System.out.print("\033[H\033[2J");//Runtime.getRuntime().exec("clear");
-			System.out.flush();
+			limpaTela();
 			break;
 		}
 			case "4": //editContato
 			{
+				limpaTela();
 				List<Contato> listaContatos = proxy.listarTodos();
 				int index=0;
 				String aux;
@@ -175,7 +181,7 @@ public class User {
 				Telefone.Builder telefone = Telefone.newBuilder();
 				if (aux.equals(""))telefone.setTelefone(listaContatos.get(index).getTelefones(0).getTelefone());
 				else telefone.setTelefone(aux );
-				System.out.println("Dseja editar o tipo do telefone(Mobile, Personal, Home, Work)? Senão aperte ENTER:");
+				System.out.println("Deseja editar o tipo do telefone(Mobile, Personal, Home, Work)? Senão aperte ENTER:");
 				type = stdin.readLine();
 				if(type.equals("")) telefone.setTypeValue(listaContatos.get(index).getTelefones(0).getTypeValue());
 				else {
@@ -227,17 +233,14 @@ public class User {
 				System.out.println("Aperte Enter para voltar ao menu...");
 				input = scanner.nextLine();
 
-				System.out.print("\033[H\033[2J");//Runtime.getRuntime().exec("clear");
-				System.out.flush();
+				limpaTela();
 
 				break;
-
-
-
 			}
 
 		case "5": //rmContato
 		{
+			limpaTela();
 			System.out.println("Digite o nome para remover");
 			String nome = stdin.readLine();
 			Boolean result = proxy.removerContato(nome);
@@ -249,13 +252,13 @@ public class User {
 			System.out.println("Aperte Enter para voltar ao menu...");
 			input = scanner.nextLine();
 
-			System.out.print("\033[H\033[2J");//Runtime.getRuntime().exec("clear");
-			System.out.flush();
+			limpaTela();
 			break;
 		}
 
 		case "6": //limparAgenda
 			{
+				limpaTela();
 				Boolean result = proxy.limparAgenda();
 				if (result) {
 					System.out.println("Agenda limpa com sucesso");
@@ -265,12 +268,12 @@ public class User {
 				System.out.println("Aperte Enter para voltar ao menu...");
 				input = scanner.nextLine();
 
-				System.out.print("\033[H\033[2J");//Runtime.getRuntime().exec("clear");
-				System.out.flush();
+				limpaTela();
 				break;
 			}
 
 		case "0":
+			limpaTela();
 			System.out.println("Finalizando aplicação");
 			proxy.finaliza();
 			opt = "exit";

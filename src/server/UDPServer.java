@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -15,27 +17,40 @@ public class UDPServer {
     private static byte[] buffer = new byte[1024];
     private static DatagramPacket request;
     private static DatagramPacket reply;
+    private static Map<Integer, byte[]> mapa;
 
 	public static void main(String args[]) {
+		mapa = new TreeMap<Integer, byte[]>();
 		despachante = Despachante.getInstance();
 		aSocket = null;
 		try {
 			aSocket = new DatagramSocket(6789);
 			while (true) {
+				System.out.println("Servidor rodando...");
+				
 				// Recebe a requisição
                 byte[] bytes_request = getRequest();
         		
                 // Desempacota a requisição
                 Message message_request = desempacotaRequisicao(bytes_request);
 
+                if (mapa.containsKey(message_request.getId())) {
+    	            // Envia a resposta empacotada
+                    sendResponse(mapa.get(message_request.getId()));
+
+                    continue;
+                }
+                
                 // Resolve a requisição e salva a resposta
                 ByteString byteString_response = despachante.invoke(message_request);
 
                 // Empacota a resposta
-	            byte[] bytes_packed_response = empacotaResposta(message_request, byteString_response);
-
+	            byte[] bytes_packed_response = empacotaResposta(message_request, byteString_response);	            
+	            
 	            // Envia a resposta empacotada
                 sendResponse(bytes_packed_response);
+                
+                mapa.put(message_request.getId(), bytes_packed_response);
 			}
 		} catch (SocketException e) {
 			System.out.println("Socket: " + e.getMessage());
@@ -50,7 +65,7 @@ public class UDPServer {
     public static byte[] getRequest() throws IOException { 
         request = new DatagramPacket(buffer, buffer.length);
 		aSocket.receive(request);
-
+		
 		byte[] aux = new byte[request.getLength()];
 		for (int i = 0; i < request.getLength(); i++) {
 			aux[i] = request.getData()[i];

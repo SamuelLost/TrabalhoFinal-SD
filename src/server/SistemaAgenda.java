@@ -1,5 +1,6 @@
 package server;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -14,13 +15,31 @@ import com.trabalhoFinal.protos.AgendaProto.Contato.Email;
 public class SistemaAgenda {    
     private static final String FILENAME = "agenda.txt"; 
     
-	private FileInputStream lerArquivoEntrada() throws FileNotFoundException {
-		FileInputStream inputStream = new FileInputStream(FILENAME);
+	private FileInputStream lerArquivoEntrada() {
+		File f = new File(FILENAME);
+		if(!f.exists()){
+			try {
+				f.createNewFile();
+			} catch (IOException e) {
+				System.out.println("IOException: " + e.getMessage());
+			}
+		}
+		FileInputStream inputStream = null;
+		try {
+			inputStream = new FileInputStream(f);
+		} catch (FileNotFoundException e) {
+			System.out.println(FILENAME + ": File not found.  Creating a new file.");
+		}
     	return inputStream;
 	}
 	
-	private FileOutputStream lerArquivoSaida() throws FileNotFoundException {
-		FileOutputStream outputStream = new FileOutputStream(FILENAME);
+	private FileOutputStream lerArquivoSaida() {
+		FileOutputStream outputStream = null;
+		try {
+			outputStream = new FileOutputStream(FILENAME);
+		} catch (FileNotFoundException e) {
+			System.out.println(FILENAME + ": File not found.  Creating a new file.");
+		}
     	return outputStream;
 	}
 	
