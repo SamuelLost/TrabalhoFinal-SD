@@ -169,30 +169,23 @@ public class SistemaAgenda {
 	   if (agenda.build().getContatosCount()==0) return true;
 	   else return false;
 	}
-	/*
+
 	public Boolean editContato(Contato contato) throws IOException {
 		Agenda.Builder agenda = Agenda.newBuilder();
-
 		// ler arquivo
 		FileInputStream inputStream = lerArquivoEntrada();
-
 		// Lê do arquivo e salva em agenda
 		agenda.mergeFrom(inputStream);
-
 		// fechar arquivo
 		inputStream.close();
-
-		Boolean result = true;
+		int index=0;
 		for (Contato _contato : agenda.getContatosList()) {
-			if () {
-				result = false;
+			if (_contato.getNome().equals(contato.getNome())) {
+				agenda.setContatos(index,contato);
 			}
+			index++;
 		}
 
-		// adiciona novo contato
-		if (result) {
-			agenda.addContatos(contato);
-		}
 
 		// ler arquivo
 		FileOutputStream outputStream = lerArquivoSaida();
@@ -203,6 +196,6 @@ public class SistemaAgenda {
 		// fechar arquivo
 		outputStream.close();
 
-		return result;
-	}*/
+		return true;
+	}
 }

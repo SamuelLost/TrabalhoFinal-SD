@@ -39,13 +39,13 @@ public class Esqueleto {
 
     	return ByteString.copyFrom(agenda_response.toByteArray());
     }
-    /*ByteString editContato(ByteString args) throws InvalidProtocolBufferException {
+    ByteString editaContato(ByteString args) throws IOException {
         Contato contato = Contato.parseFrom(args.toByteArray());
 
-        Boolean response = agenda.addContato(contato);
+        Boolean response = agenda.editContato(contato);
 
         return ByteString.copyFrom(response.toString().getBytes());
-    }*/
+    }
     ByteString removerContato(ByteString args) throws IOException{
     	Boolean response = agenda.removerContato(new String(args.toByteArray()));
     	
