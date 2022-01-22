@@ -141,7 +141,7 @@ public class User {
 			System.out.flush();
 			break;
 		}
-			/*case "4": //editContato
+			case "4": //editContato
 			{
 				List<Contato> listaContatos = proxy.listarTodos();
 				int index=0;
@@ -166,14 +166,10 @@ public class User {
 				}
 				System.out.println("Digite o index do numero que deseja editar:");
 				index = Integer.parseInt(stdin.readLine());
-
 				Contato.Builder contato = Contato.newBuilder();
 				String type;
 
-				System.out.println("Deseja alterar o nome do Contato? Senão aperte ENTER:");
-				aux = stdin.readLine();
-				if (aux.equals(""))contato.setNome(listaContatos.get(index).getNome());
-				else contato.setNome(aux);
+				contato.setNome(listaContatos.get(index).getNome());
 				System.out.println("Deseja alterar o Telefone do Contato? Senão aperte ENTER:");
 				aux = stdin.readLine();
 				Telefone.Builder telefone = Telefone.newBuilder();
@@ -220,12 +216,12 @@ public class User {
 					else if (type.equals("Home") || type.equals("home")) email.setTypeValue(2);
 					else if (type.equals("Work") || type.equals("work")) email.setTypeValue(3);
 				}
-
 				contato.addEmails(email);
+
 				if (proxy.editarContato(contato.build())) {
-					System.out.println("Contato cadastrado com sucesso");
+					System.out.println("Contato editado com sucesso");
 				} else {
-					System.out.println("Sem sucesso. Contato já existe");
+					System.out.println("Sem sucesso. Contato não existe");
 				}
 
 				System.out.println("Aperte Enter para voltar ao menu...");
@@ -238,7 +234,7 @@ public class User {
 
 
 
-			}*/
+			}
 
 		case "5": //rmContato
 		{

@@ -59,7 +59,7 @@ public class Proxy {
     }
 
     // retorna true se conseguir editar, falso caso o contato não exista
-    /*public Boolean editarContato(Contato contato) throws InvalidProtocolBufferException {
+    public Boolean editarContato(Contato contato) throws InvalidProtocolBufferException {
 
         ByteString args = ByteString.copyFrom(contato.toByteArray());
 
@@ -70,7 +70,7 @@ public class Proxy {
         Boolean response = Boolean.valueOf(new String(byteString.toByteArray()));
 
         return response;
-    }*/
+    }
 
     // retorna true caso consiga remover o contato, falto caso o contato não exista
     public Boolean removerContato(String nome) throws InvalidProtocolBufferException {
