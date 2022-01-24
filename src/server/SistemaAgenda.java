@@ -15,6 +15,10 @@ import com.trabalhoFinal.protos.AgendaProto.Contato.Email;
 public class SistemaAgenda {    
     private static final String FILENAME = "agenda.txt"; 
     
+    /**
+     * Método para ler um arquivo de entrada
+     * @return arquivo de entrada
+     */
 	private FileInputStream lerArquivoEntrada() {
 		File f = new File(FILENAME);
 		if(!f.exists()){
@@ -33,6 +37,10 @@ public class SistemaAgenda {
     	return inputStream;
 	}
 	
+    /**
+     * Método para ler arquivo de saída
+     * @return arquivo de saída
+     */
 	private FileOutputStream lerArquivoSaida() {
 		FileOutputStream outputStream = null;
 		try {
@@ -43,6 +51,19 @@ public class SistemaAgenda {
     	return outputStream;
 	}
 	
+    /**
+     * Método para adicionar o contato. Cria uma agenda, lê o arquivo
+     * de entrada e salva o conteudo do arquivo em agenda através do
+     * mergeFrom() desserializada e fecha o arquivo de entrada.
+     * 
+     * Após isso, percorre contato por contato e verifica se existe
+     * algum contato com o mesmo nome, caso existe não é possível
+     * adicionar. Caso contrário, o contato é adicionado na agenda
+     * e a agenda é escrita serializada no arquivo através de writeTo().
+     * @param contato
+     * @return
+     * @throws IOException
+     */
     public Boolean addContato(Contato contato) throws IOException {
     	Agenda.Builder agenda = Agenda.newBuilder();
 
@@ -79,6 +100,11 @@ public class SistemaAgenda {
     	return result;
     }
 
+    /**
+     * 
+     * @return
+     * @throws IOException
+     */
     public Agenda listarContato() throws IOException {
     	Agenda.Builder agenda = Agenda.newBuilder();
     	
@@ -165,7 +191,7 @@ public class SistemaAgenda {
     	return false;
     }
 
-   public Boolean cleanAgenda() throws IOException {
+    public Boolean cleanAgenda() throws IOException {
 	   Agenda.Builder agenda = Agenda.newBuilder();
 
 	   // ler arquivo

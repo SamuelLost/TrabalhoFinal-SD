@@ -1,11 +1,17 @@
 package views;
 
 public class Tela {
+    /**
+     * Método para fazer apenas uma "limpeza" no terminal
+     */
 	public static void limpaTela() {
 		System.out.print("\033[H\033[2J");
 		System.out.flush();
 	}
 	
+    /**
+     * Método void apenas para imprimir o menu da aplicação
+     */
 	public static void printMenu() {
 		System.out.println("\nDigite o n# da operação que deseja executar: ");
 		System.out.println("1 - Adicionar Contato");

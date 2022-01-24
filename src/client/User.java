@@ -13,38 +13,50 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class User {
-    Proxy proxy;
-	Scanner scanner = new Scanner(System.in);
-	String input;
+    Proxy proxy; // Classe Proxy
+	Scanner scanner = new Scanner(System.in); //Leitura do teclado
+	String input; //String para entrada
     
     public User(){
-        proxy = new Proxy();
+        proxy = new Proxy(); //Instanciando o objeto Proxy
     }
 
+    /**
+     * Método para selecionar a operação que vai ser realizada
+     * @return string com a operação realizada
+     * @throws IOException - gerada se acontecer o erro na entrada
+     * @throws InterruptedException - gerada caso a thread seja interrompida
+     */
     public String selecionaOperacao() throws IOException, InterruptedException {
-		BufferedReader stdin = new BufferedReader(new InputStreamReader(
-				System.in));
+        //Entrada pelo teclado
+		BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
 		String opt = null;
 		do {
-			opt = stdin.readLine();
+			opt = stdin.readLine(); //Escolhendo a opção do menu
 		} while (opt.equals("\n") || opt.equals("") || opt.isEmpty());
 		
 		switch (opt) {
 		case "1": //addContato
 		{
 			Tela.limpaTela();
+
+            //Criando o objeto Contato presente no .proto
             Contato.Builder contato = Contato.newBuilder();
 			String type;
             
             System.out.println("Digite o nome do Contato:");
-            contato.setNome(stdin.readLine());
+            contato.setNome(stdin.readLine()); //setando o nome do contato
             
             System.out.println("Digite o telefone do Contato:");
+            //Criando o objeto telefone presente no .proto
             Telefone.Builder telefone = Telefone.newBuilder();
+
+            //Digitando 1 ou mais telefones para o contato
             while(true) {
             	String num = stdin.readLine();
             	if(num.length() == 0) break;
             	else {
+                    //Fazendo a validação de um número de telefone
             		if(Validation.validationTelefone(num)) telefone.setTelefone(num);
                     else {
                     	System.out.println("Caracteres inválidos. Digite novamente:");
@@ -63,7 +75,9 @@ public class User {
             
             
             System.out.println("Digite o endereço do Contato:");
+            //Criando o objeto Endereço presente no .proto
             Endereco.Builder endereco = Endereco.newBuilder();
+            //Digitando 1 ou mais endereço para o contato
             while(true) {
             	String end = stdin.readLine();
             	if(end.length() == 0) break;
@@ -79,11 +93,14 @@ public class User {
             }
             
             System.out.println("Digite o email do Contato:");
+            //Criando o objeto Email presente no .proto
             Email.Builder email = Email.newBuilder();
+            //Fazendo a leitura de um ou mais emails
             while(true) {
             	String email_in = stdin.readLine();
             	if(email_in.length() == 0) break;
             	else {
+                    //Validando o email
             		if(Validation.validationEmail(email_in)) email.setEmail(email_in);
                     else {
                     	System.out.println("Email inválido. Digite novamente:");
@@ -99,6 +116,7 @@ public class User {
             	System.out.println("Digite outro email do Contato ou ENTER para o próximo:");
             }
             
+            // Verificando se o contato foi adicionado com sucesso
 			if (proxy.addContato(contato.build())) {
 				System.out.println("Contato cadastrado com sucesso");
 			} else {
@@ -108,23 +126,29 @@ public class User {
 			input = scanner.nextLine();
 
 			Tela.limpaTela();
+            opt = "addContato";
 			break;
 		}
 		case "2": //listarContatos
 		{
 			Tela.limpaTela();
+            //Lista com os contatos existentes
 			List<Contato> listaContatos = proxy.listarTodos();
+            //Percorrendo os contatos
 			for (Contato _contato : listaContatos) {
 				System.out.println("Nome: " + _contato.getNome());
 				System.out.println("Telefones: ");
+                //Percorrendo os telefones do contato
 				for (Telefone tel : _contato.getTelefonesList()) {
 					System.out.println("- " + tel.getTelefone() + " Tipo:" + tel.getType());
 				}
 				System.out.println("Endereços: ");
+                //Percorrendo os endereços do contato
 				for (Endereco end : _contato.getEnderecosList()) {
 					System.out.println("- " + end.getEndereco() + " Tipo:" + end.getType());
 				}
 				System.out.println("E-mails: ");
+                //Percorrendo os emails do contato
 				for (Email end : _contato.getEmailsList()) {
 					System.out.println("- " + end.getEmail() + " Tipo:" + end.getType());
 				}
@@ -134,7 +158,7 @@ public class User {
 			input = scanner.nextLine();
 
 			Tela.limpaTela();
-
+            opt = "listarContatos";
 			break;
 		}
 
@@ -144,22 +168,25 @@ public class User {
 			Tela.limpaTela();
 			System.out.println("Digite sua busca: ");
 			String busca = stdin.readLine();
-
+            //Lista com os contatos que contém a string de busca
 			List<Contato> listaContatos = proxy.procContato(busca);
 
 			System.out.println("Quantidade: " + listaContatos.size());
-
+            //Percorrendo contato
 			for (Contato _contato : listaContatos) {
 				System.out.println("Nome: " + _contato.getNome());
 				System.out.println("Telefones: ");
+                //Percorrendo os telefones do contato
 				for (Telefone tel : _contato.getTelefonesList()) {
 					System.out.println("- " + tel.getTelefone() + " Tipo:" + tel.getType());
 				}
 				System.out.println("Endereços: ");
+                //Percorrendo os endereços do contato
 				for (Endereco end : _contato.getEnderecosList()) {
 					System.out.println("- " + end.getEndereco() + " Tipo:" + end.getType());
 				}
 				System.out.println("E-mails: ");
+                //Percorrendo os emails do contato
 				for (Email end : _contato.getEmailsList()) {
 					System.out.println("- " + end.getEmail() + " Tipo:" + end.getType());
 				}
@@ -168,26 +195,32 @@ public class User {
 			input = scanner.nextLine();
 
 			Tela.limpaTela();
+            opt = "procContato";
 			break;
 		}
 			case "4": //editContato
 			{
 				Tela.limpaTela();
+                //Lista dos contatos existentes
 				List<Contato> listaContatos = proxy.listarTodos();
 				int index=0;
 				String aux;
+                //Percorrendo o contato
 				for (Contato _contato : listaContatos) {
 					System.out.println("Index:" + index);
 					System.out.println("Nome: " + _contato.getNome());
 					System.out.println("Telefones: ");
+                    //Percorrendo os telefones do contato
 					for (Telefone tel : _contato.getTelefonesList()) {
 						System.out.println("- " + tel.getTelefone() + " " + tel.getType());
 					}
 					System.out.println("Endereços: ");
+                    //Percorrendo os endereços do contato
 					for (Endereco end : _contato.getEnderecosList()) {
 						System.out.println("- " + end.getEndereco() + " " + end.getType());
 					}
 					System.out.println("E-mails: ");
+                    //Percorrendo os emails do contato
 					for (Email end : _contato.getEmailsList()) {
 						System.out.println("- " + end.getEmail() + " " + end.getType());
 					}
@@ -199,7 +232,13 @@ public class User {
 				Contato.Builder contato = Contato.newBuilder();
 				String type;
 
-				contato.setNome(listaContatos.get(index).getNome());
+                System.out.println("Deseja alterar o Telefone do Contato? Senão aperte ENTER:");
+                aux = stdin.readLine();
+                //Alterando o nome.
+                if(aux.length() == 0) contato.setNome(listaContatos.get(index).getNome());
+				else contato.setNome(aux);
+
+				// contato.setNome(listaContatos.get(index).getNome()); - original
 				System.out.println("Deseja alterar o Telefone do Contato? Senão aperte ENTER:");
 				aux = stdin.readLine();
 				Telefone.Builder telefone = Telefone.newBuilder();
@@ -267,7 +306,7 @@ public class User {
 				input = scanner.nextLine();
 
 				Tela.limpaTela();
-
+                opt = "editContato";
 				break;
 			}
 
@@ -286,6 +325,7 @@ public class User {
 			input = scanner.nextLine();
 
 			Tela.limpaTela();
+            opt = "rmContato";
 			break;
 		}
 
@@ -302,6 +342,7 @@ public class User {
 				input = scanner.nextLine();
 
 				Tela.limpaTela();
+                opt = "limparAgenda";
 				break;
 			}
 
