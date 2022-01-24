@@ -7,6 +7,8 @@ import java.util.List;
 import com.trabalhoFinal.protos.AgendaProto.Contato;
 import com.trabalhoFinal.protos.AgendaProto.Contato.*;
 
+import views.Tela;
+
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -15,11 +17,6 @@ public class User {
 	Scanner scanner = new Scanner(System.in);
 	String input;
     
-	public static void limpaTela() {
-		System.out.print("\033[H\033[2J");
-		System.out.flush();
-	}
-	
     public User(){
         proxy = new Proxy();
     }
@@ -35,7 +32,7 @@ public class User {
 		switch (opt) {
 		case "1": //addContato
 		{
-			limpaTela();
+			Tela.limpaTela();
             Contato.Builder contato = Contato.newBuilder();
 			String type;
             
@@ -44,36 +41,63 @@ public class User {
             
             System.out.println("Digite o telefone do Contato:");
             Telefone.Builder telefone = Telefone.newBuilder();
-            telefone.setTelefone(stdin.readLine());
-			System.out.println("Digite o tipo do telefone(Mobile, Personal, Home, Work):");
-			type = stdin.readLine();
-			if (type.equals("Mobile") || type.equals("mobile")) telefone.setTypeValue(0);
-			else if (type.equals("Personal") || type.equals("personal")) telefone.setTypeValue(1);
-			else if (type.equals("Home") || type.equals("home")) telefone.setTypeValue(2);
-			else if (type.equals("Work") || type.equals("work")) telefone.setTypeValue(3);
-            contato.addTelefones(telefone);
+            while(true) {
+            	String num = stdin.readLine();
+            	if(num.length() == 0) break;
+            	else {
+            		if(Validation.validationTelefone(num)) telefone.setTelefone(num);
+                    else {
+                    	System.out.println("Caracteres inválidos. Digite novamente:");
+                    	telefone.setTelefone(stdin.readLine());
+                    }
+        			System.out.println("Digite o tipo do telefone (1 - Mobile, 2 - Personal, 3 - Home, 4 - Work):");
+        			type = stdin.readLine();
+        			if (type.equals("1") || type.equals("Mobile") || type.equals("mobile")) telefone.setTypeValue(0);
+        			else if (type.equals("2") || type.equals("Personal") || type.equals("personal")) telefone.setTypeValue(1);
+        			else if (type.equals("3") || type.equals("Home") || type.equals("home")) telefone.setTypeValue(2);
+        			else if (type.equals("4") || type.equals("Work") || type.equals("work")) telefone.setTypeValue(3);
+                    contato.addTelefones(telefone);
+            	}
+                System.out.println("Digite outro telefone do Contato ou ENTER para o próximo:");
+            }
+            
             
             System.out.println("Digite o endereço do Contato:");
             Endereco.Builder endereco = Endereco.newBuilder();
-            endereco.setEndereco(stdin.readLine());
-			System.out.println("Digite o tipo do Endereço(Mobile, Personal, Home, Work):");
-			type = stdin.readLine();
-			if (type.equals("Mobile") || type.equals("mobile")) endereco.setTypeValue(0);
-			else if (type.equals("Personal") || type.equals("personal")) endereco.setTypeValue(1);
-			else if (type.equals("Home") || type.equals("home")) endereco.setTypeValue(2);
-			else if (type.equals("Work") || type.equals("work")) endereco.setTypeValue(3);
-            contato.addEnderecos(endereco);
+            while(true) {
+            	String end = stdin.readLine();
+            	if(end.length() == 0) break;
+            	else {
+            		endereco.setEndereco(end);
+        			System.out.println("Digite o tipo do Endereço (1 - Home, 2 - Work):");
+        			type = stdin.readLine();
+        			if (type.equals("1") || type.equals("Home") || type.equals("home")) endereco.setTypeValue(1);
+        			else if (type.equals("2") || type.equals("Work") || type.equals("work")) endereco.setTypeValue(3);
+                    contato.addEnderecos(endereco);
+            	}
+            	System.out.println("Digite outro endereço do Contato ou ENTER para o próximo:");
+            }
             
             System.out.println("Digite o email do Contato:");
             Email.Builder email = Email.newBuilder();
-            email.setEmail(stdin.readLine());
-			System.out.println("Digite o tipo do Email(Mobile, Personal, Home, Work):");
-			type = stdin.readLine();
-			if (type.equals("Mobile") || type.equals("mobile")) email.setTypeValue(0);
-			else if (type.equals("Personal") || type.equals("personal")) email.setTypeValue(1);
-			else if (type.equals("Home") || type.equals("home")) email.setTypeValue(2);
-			else if (type.equals("Work") || type.equals("work")) email.setTypeValue(3);
-            contato.addEmails(email);
+            while(true) {
+            	String email_in = stdin.readLine();
+            	if(email_in.length() == 0) break;
+            	else {
+            		if(Validation.validationEmail(email_in)) email.setEmail(email_in);
+                    else {
+                    	System.out.println("Email inválido. Digite novamente:");
+                    	email.setEmail(stdin.readLine());
+                    }
+                    
+        			System.out.println("Digite o tipo do Email (1 - Personal, 2 - Work):");
+        			type = stdin.readLine();
+        			if (type.equals("1") || type.equals("Personal") || type.equals("personal")) email.setTypeValue(1);
+        			else if (type.equals("1") || type.equals("Work") || type.equals("work")) email.setTypeValue(3);
+                    contato.addEmails(email);
+            	}
+            	System.out.println("Digite outro email do Contato ou ENTER para o próximo:");
+            }
             
 			if (proxy.addContato(contato.build())) {
 				System.out.println("Contato cadastrado com sucesso");
@@ -83,12 +107,12 @@ public class User {
 			System.out.println("Aperte Enter para voltar ao menu...");
 			input = scanner.nextLine();
 
-			limpaTela();
+			Tela.limpaTela();
 			break;
 		}
 		case "2": //listarContatos
 		{
-			limpaTela();
+			Tela.limpaTela();
 			List<Contato> listaContatos = proxy.listarTodos();
 			for (Contato _contato : listaContatos) {
 				System.out.println("Nome: " + _contato.getNome());
@@ -109,7 +133,7 @@ public class User {
 			System.out.println("Aperte Enter para voltar ao menu...");
 			input = scanner.nextLine();
 
-			limpaTela();
+			Tela.limpaTela();
 
 			break;
 		}
@@ -117,8 +141,8 @@ public class User {
 
 		case "3": //procContatos
 		{
-			limpaTela();
-			System.out.println("Digite sua busca");
+			Tela.limpaTela();
+			System.out.println("Digite sua busca: ");
 			String busca = stdin.readLine();
 
 			List<Contato> listaContatos = proxy.procContato(busca);
@@ -143,12 +167,12 @@ public class User {
 			System.out.println("Aperte Enter para voltar ao menu...");
 			input = scanner.nextLine();
 
-			limpaTela();
+			Tela.limpaTela();
 			break;
 		}
 			case "4": //editContato
 			{
-				limpaTela();
+				Tela.limpaTela();
 				List<Contato> listaContatos = proxy.listarTodos();
 				int index=0;
 				String aux;
@@ -170,7 +194,7 @@ public class User {
 					index++;
 					System.out.println("------------------------------------------");
 				}
-				System.out.println("Digite o index do numero que deseja editar:");
+				System.out.println("Digite o index do contato que deseja editar: ");
 				index = Integer.parseInt(stdin.readLine());
 				Contato.Builder contato = Contato.newBuilder();
 				String type;
@@ -179,32 +203,37 @@ public class User {
 				System.out.println("Deseja alterar o Telefone do Contato? Senão aperte ENTER:");
 				aux = stdin.readLine();
 				Telefone.Builder telefone = Telefone.newBuilder();
-				if (aux.equals(""))telefone.setTelefone(listaContatos.get(index).getTelefones(0).getTelefone());
-				else telefone.setTelefone(aux );
-				System.out.println("Deseja editar o tipo do telefone(Mobile, Personal, Home, Work)? Senão aperte ENTER:");
+				if (aux.equals("")) telefone.setTelefone(listaContatos.get(index).getTelefones(0).getTelefone());
+				else {
+					if(Validation.validationTelefone(aux)) telefone.setTelefone(aux);
+					else {
+						System.out.println("Caracteres inválidos. Digite novamente:");
+		            	telefone.setTelefone(stdin.readLine());
+					}
+				
+				}
+				System.out.println("Deseja editar o tipo do telefone (1 - Mobile, 2 - Personal, 3 - Home, 4 - Work)? Senão aperte ENTER:  ");
 				type = stdin.readLine();
 				if(type.equals("")) telefone.setTypeValue(listaContatos.get(index).getTelefones(0).getTypeValue());
 				else {
-					if (type.equals("Mobile") || type.equals("mobile")) telefone.setTypeValue(0);
-					else if (type.equals("Personal") || type.equals("personal")) telefone.setTypeValue(1);
-					else if (type.equals("Home") || type.equals("home")) telefone.setTypeValue(2);
-					else if (type.equals("Work") || type.equals("work")) telefone.setTypeValue(3);
+					if (type.equals("1") || type.equals("Mobile") || type.equals("mobile")) telefone.setTypeValue(0);
+					else if (type.equals("2") || type.equals("Personal") || type.equals("personal")) telefone.setTypeValue(1);
+					else if (type.equals("3") || type.equals("Home") || type.equals("home")) telefone.setTypeValue(2);
+					else if (type.equals("4") || type.equals("Work") || type.equals("work")) telefone.setTypeValue(3);
 				}
 				contato.addTelefones(telefone);
 
-				System.out.println("Deseja alterar o Endereço do Contato? Senão aperte ENTER:");
+				System.out.println("Deseja alterar o endereço do Contato? Senão aperte ENTER:");
 				aux = stdin.readLine();
 				Endereco.Builder endereco = Endereco.newBuilder();
 				if (aux.equals(""))endereco.setEndereco(listaContatos.get(index).getEnderecos(0).getEndereco());
 				else endereco.setEndereco(aux );
-				System.out.println("Dseja editar o tipo do Endereço(Mobile, Personal, Home, Work)? Senão aperte ENTER:");
+				System.out.println("Dseja editar o tipo do Endereço (1 - Home, 2 - Work)? Senão aperte ENTER:");
 				type = stdin.readLine();
 				if(type.equals("")) endereco.setTypeValue(listaContatos.get(index).getEnderecos(0).getTypeValue());
 				else {
-					if (type.equals("Mobile") || type.equals("mobile")) endereco.setTypeValue(0);
-					else if (type.equals("Personal") || type.equals("personal")) endereco.setTypeValue(1);
-					else if (type.equals("Home") || type.equals("home")) endereco.setTypeValue(2);
-					else if (type.equals("Work") || type.equals("work")) endereco.setTypeValue(3);
+					if (type.equals("1") || type.equals("Personal") || type.equals("personal")) endereco.setTypeValue(1);
+					else if (type.equals("2") || type.equals("Work") || type.equals("work")) endereco.setTypeValue(3);
 				}
 				contato.addEnderecos(endereco);
 
@@ -212,15 +241,19 @@ public class User {
 				aux = stdin.readLine();
 				Email.Builder email = Email.newBuilder();
 				if (aux.equals(""))email.setEmail(listaContatos.get(index).getEmails(0).getEmail());
-				else email.setEmail(aux);
-				System.out.println("Dseja editar o tipo do Email(Mobile, Personal, Home, Work)? Senão aperte ENTER:");
+				else {
+					if(Validation.validationEmail(aux)) email.setEmail(aux);
+		            else {
+		            	System.out.println("Email inválido. Digite novamente:");
+		            	email.setEmail(stdin.readLine());
+		            }
+				}
+				System.out.println("Dseja editar o tipo do Email(1 - Personal, 2 - Work)? Senão aperte ENTER:");
 				type = stdin.readLine();
 				if(type.equals("")) email.setTypeValue(listaContatos.get(index).getEmails(0).getTypeValue());
 				else {
-					if (type.equals("Mobile") || type.equals("mobile")) email.setTypeValue(0);
-					else if (type.equals("Personal") || type.equals("personal")) email.setTypeValue(1);
-					else if (type.equals("Home") || type.equals("home")) email.setTypeValue(2);
-					else if (type.equals("Work") || type.equals("work")) email.setTypeValue(3);
+					if (type.equals("1") || type.equals("Personal") || type.equals("personal")) email.setTypeValue(1);
+					else if (type.equals("1") || type.equals("Work") || type.equals("work")) email.setTypeValue(3);
 				}
 				contato.addEmails(email);
 
@@ -233,14 +266,14 @@ public class User {
 				System.out.println("Aperte Enter para voltar ao menu...");
 				input = scanner.nextLine();
 
-				limpaTela();
+				Tela.limpaTela();
 
 				break;
 			}
 
 		case "5": //rmContato
 		{
-			limpaTela();
+			Tela.limpaTela();
 			System.out.println("Digite o nome para remover");
 			String nome = stdin.readLine();
 			Boolean result = proxy.removerContato(nome);
@@ -252,13 +285,13 @@ public class User {
 			System.out.println("Aperte Enter para voltar ao menu...");
 			input = scanner.nextLine();
 
-			limpaTela();
+			Tela.limpaTela();
 			break;
 		}
 
 		case "6": //limparAgenda
 			{
-				limpaTela();
+				Tela.limpaTela();
 				Boolean result = proxy.limparAgenda();
 				if (result) {
 					System.out.println("Agenda limpa com sucesso");
@@ -268,12 +301,12 @@ public class User {
 				System.out.println("Aperte Enter para voltar ao menu...");
 				input = scanner.nextLine();
 
-				limpaTela();
+				Tela.limpaTela();
 				break;
 			}
 
 		case "0":
-			limpaTela();
+			Tela.limpaTela();
 			System.out.println("Finalizando aplicação");
 			proxy.finaliza();
 			opt = "exit";
@@ -285,21 +318,12 @@ public class User {
 		}
 		return opt;
     }    
-    public void printMenu() {
-		System.out.println("\nDigite o n# da operação que deseja executar: ");
-		System.out.println("1 - Adicionar Contato");
-		System.out.println("2 - Listar Contatos");
-		System.out.println("3 - Procurar Contato");
-        System.out.println("4 - Editar Contato");
-        System.out.println("5 - Remover Contato");
-        System.out.println("6 - Limpar Agenda");
-		System.out.println("0 - Sair\n");
-	}
+    
     public static void main(String[] args) {
         User bookClient = new User();
 		String operacao = "exit";
 		do {
-			bookClient.printMenu();
+			Tela.printMenu();
 			try {
 				operacao = bookClient.selecionaOperacao();
 			} catch (IOException ex) {
