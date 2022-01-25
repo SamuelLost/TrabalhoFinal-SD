@@ -8,7 +8,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 public class UDPClient {
-    protected DatagramSocket socket;
+    private DatagramSocket socket;
     private InetAddress aHost;
     private int serverPort;
     private DatagramPacket request;

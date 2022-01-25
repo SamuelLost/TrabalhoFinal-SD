@@ -11,7 +11,6 @@ import com.trabalhoFinal.protos.AgendaProto.Contato.Endereco;
 import com.trabalhoFinal.protos.AgendaProto.Contato.Telefone;
 
 import client.Proxy;
-import client.Validation;
 
 public class AdicionarContato {
 	Proxy proxy;

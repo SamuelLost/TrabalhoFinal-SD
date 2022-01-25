@@ -1,4 +1,4 @@
-package client;
+package useCases;
 
 public class Validation {
 	/**
