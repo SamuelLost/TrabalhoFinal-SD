@@ -9,6 +9,9 @@ import com.trabalhoFinal.protos.MessageProto.Message;
 public class Despachante {
     private static Despachante uniqueInstance;
 
+    /**
+     * Construtor vazio para permitir o uso de objetos apenas através do getInstance
+     */
     private Despachante() {}
 
     /**
