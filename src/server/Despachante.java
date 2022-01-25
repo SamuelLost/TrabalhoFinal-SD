@@ -9,6 +9,8 @@ import com.trabalhoFinal.protos.MessageProto.Message;
 public class Despachante {
     private static Despachante uniqueInstance;
 
+    private Despachante() {}
+
     /**
      * Método para poder pegar uma instancia de Despachante de
      * cada vez e sincronizado.
