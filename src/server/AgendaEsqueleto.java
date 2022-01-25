@@ -7,16 +7,10 @@ import com.trabalhoFinal.protos.AgendaProto.Agenda;
 import com.trabalhoFinal.protos.AgendaProto.Contato;
 
 public class AgendaEsqueleto {
-    private static AgendaEsqueleto uniqueInstance;
-    private static SistemaAgenda agenda;
+    private SistemaAgenda agenda;
 
-    //Singleton
-    public static synchronized AgendaEsqueleto getInstance() {
-        if (uniqueInstance == null) {
-            uniqueInstance = new AgendaEsqueleto();
-            agenda = new SistemaAgenda();
-        }
-        return uniqueInstance;
+    public AgendaEsqueleto() {
+    	agenda = new SistemaAgenda();
     }
     
     /**
@@ -27,11 +21,11 @@ public class AgendaEsqueleto {
      * @return - ByteString: resposta
      * @throws IOException - gerada pelos métodos addContato()
      */
-    public ByteString addContato(ByteString args) throws IOException {
+    public ByteString adicionarContato(ByteString args) throws IOException {
 
     	Contato contato = Contato.parseFrom(args.toByteArray());
 
-    	Boolean response = agenda.addContato(contato);
+    	Boolean response = agenda.adicionarContato(contato);
 
     	return ByteString.copyFrom(response.toString().getBytes());
     }
@@ -43,8 +37,14 @@ public class AgendaEsqueleto {
      * @return - ByteString: resposta
      * @throws IOException - gerada pelo método listarContatos()
      */
-    public ByteString listarContatos(ByteString args) throws IOException {
-    	Agenda agenda_response = agenda.listarContato();
+    public ByteString listarContatos(ByteString args) {
+    	Agenda agenda_response = null;
+    	
+		try {
+			agenda_response = agenda.listarContatos();
+		} catch (IOException e) {
+			System.out.println("Erro aqui -> " + e.getMessage());
+		}
 
     	return ByteString.copyFrom(agenda_response.toByteArray());
     }
@@ -56,8 +56,10 @@ public class AgendaEsqueleto {
      * @return - ByteString: resposta
      * @throws IOException - gerada pelo método buscarContatos()
      */
-    public ByteString buscarContatos(ByteString args) throws IOException{
-    	Agenda agenda_response = agenda.buscarContato(new String(args.toByteArray()));
+    public ByteString procurarContatos(ByteString args) throws IOException{
+    	Contato contato = Contato.parseFrom(args.toByteArray());
+    	
+    	Agenda agenda_response = agenda.procurarContato(contato);
 
     	return ByteString.copyFrom(agenda_response.toByteArray());
     }
@@ -73,7 +75,7 @@ public class AgendaEsqueleto {
         //Desserializa
         Contato contato = Contato.parseFrom(args.toByteArray());
 
-        Boolean response = agenda.editContato(contato);
+        Boolean response = agenda.editarContato(contato);
 
         return ByteString.copyFrom(response.toString().getBytes());
     }
@@ -85,8 +87,10 @@ public class AgendaEsqueleto {
      * @return - ByteString: resposta
      * @throws IOException - gerada pelo método removerContato()
      */
-    public ByteString removerContato(ByteString args) throws IOException{
-    	Boolean response = agenda.removerContato(new String(args.toByteArray()));
+    public ByteString removerContato(ByteString args) throws IOException {
+    	Contato contato = Contato.parseFrom(args.toByteArray());
+
+    	Boolean response = agenda.removerContato(contato);
     	
     	return ByteString.copyFrom(response.toString().getBytes());
     }
@@ -98,8 +102,8 @@ public class AgendaEsqueleto {
      * @return - ByteString: resposta
      * @throws IOException - gerada pelo método cleanAgenda()
      */
-    public ByteString cleanAgenda(ByteString args) throws IOException {
-        Boolean response = agenda.cleanAgenda();
+    public ByteString limparAgenda(ByteString args) throws IOException {
+        Boolean response = agenda.limparAgenda();
         return ByteString.copyFrom(response.toString().getBytes());
     }
 

@@ -1,27 +1,29 @@
 package client;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.List;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.trabalhoFinal.protos.MessageProto.Message;
+
+import exceptions.NullNameException;
+
 import com.trabalhoFinal.protos.AgendaProto.Agenda;
 import com.trabalhoFinal.protos.AgendaProto.Contato;
 
 public class Proxy {
 	final int MAX_ENVIOS = 10;
+	
+	private int requestId = 0;
     private UDPClient client;
-    private int requestId;
 
     /**
      * Construtor da classe
      */
     public Proxy() {
         client = new UDPClient();
-        requestId = 0;
     }
     
     /**
@@ -30,15 +32,20 @@ public class Proxy {
      * e retorna o resultado
      * @param contato - objeto Contato do .proto
      * @return Boolean: true se adicionar, false se já existir contato com o mesmo nome
+     * @throws Exception 
      * @throws InvalidProtocolBufferException - exceção gerada pela API do Google ao serializar
      * e transformar em em ByteString
      */
-    public Boolean addContato(Contato contato) throws InvalidProtocolBufferException {
+    public Boolean adicionarContato(Contato contato) throws NullNameException {
+    	if (contato.getNome().isEmpty()) {
+    		throw new NullNameException();
+    	}
+    	
         //Transformando em ByteString o objeto contato serializado em byte[]
         ByteString args = ByteString.copyFrom(contato.toByteArray());
 
         //Obtendo a resposta
-        byte[] resp = doOperation("Agenda", "addContato", args);
+        byte[] resp = doOperation("Agenda", "adicionarContato", args);
         
         //Transformando a resposta em ByteString
         ByteString byteString = ByteString.copyFrom(resp);
@@ -58,10 +65,10 @@ public class Proxy {
      * @throws InvalidProtocolBufferException - exceção gerada pela API do Google ao serializar
      * e transformar em em ByteString
      */
-    public List<Contato> listarTodos() throws InvalidProtocolBufferException {
+    public List<Contato> listarContatos() throws InvalidProtocolBufferException {
 
         //Obtendo a resposta
-    	byte[] resp = doOperation("Agenda", "listarContatos", ByteString.copyFrom("".getBytes()));
+    	byte[] resp = doOperation("Agenda", "listarContatos", ByteString.copyFrom(" ".getBytes()));
 
         //Transformando a resposta em ByteString
     	ByteString byteString = ByteString.copyFrom(resp);
@@ -82,8 +89,8 @@ public class Proxy {
      * @throws InvalidProtocolBufferException - exceção gerada pela API do Google ao serializar
      * e transformar em em ByteString
      */
-    public List<Contato> procContato(String busca) throws InvalidProtocolBufferException {
-        byte[] resp = doOperation("Agenda", "buscarContatos", ByteString.copyFrom(busca.getBytes()));
+    public List<Contato> procurarContatos(Contato contato) throws InvalidProtocolBufferException {
+        byte[] resp = doOperation("Agenda", "procurarContatos", ByteString.copyFrom(contato.toByteArray()));
 
     	ByteString byteString = ByteString.copyFrom(resp);
     	
@@ -104,7 +111,10 @@ public class Proxy {
      * e transformar em em ByteString
      */
     public Boolean editarContato(Contato contato) throws InvalidProtocolBufferException {
-
+    	if (contato.getNome().isEmpty()) {
+    		throw new NullNameException();
+    	}
+    	
         ByteString args = ByteString.copyFrom(contato.toByteArray());
 
         byte[] resp = doOperation("Agenda", "editarContato", args);
@@ -123,8 +133,8 @@ public class Proxy {
      * @throws InvalidProtocolBufferException - exceção gerada pela API do Google ao serializar
      * e transformar em em ByteString
      */
-    public Boolean removerContato(String nome) throws InvalidProtocolBufferException {
-        ByteString args = ByteString.copyFrom(nome.getBytes());
+    public Boolean removerContato(Contato contato) throws InvalidProtocolBufferException {
+        ByteString args = ByteString.copyFrom(contato.toByteArray());
 
         byte[] resp = doOperation("Agenda", "removerContato", args);
         
@@ -144,7 +154,8 @@ public class Proxy {
      */
     public Boolean limparAgenda() throws InvalidProtocolBufferException {
         ByteString args = ByteString.copyFrom(("remove").getBytes());
-        byte[] resp = doOperation("Agenda", "cleanAgenda", args);
+        
+        byte[] resp = doOperation("Agenda", "limparAgenda", args);
 
         ByteString byteString = ByteString.copyFrom(resp);
 
@@ -172,15 +183,10 @@ public class Proxy {
     public byte[] empacotaMensagem(String objectRef, String method, ByteString args) {
         Message.Builder message = Message.newBuilder();
         message.setType(0);  // 0 -> request
-
         message.setId(requestId++);
-        
         message.setObjReference(objectRef);
-        
         message.setMethodId(method);
-        
         message.setArgs(args);
-        
         return message.build().toByteArray();
     }
 
@@ -213,38 +219,25 @@ public class Proxy {
      * @return - a resposta em byte[]
      */
 	public byte[] doOperation(String objectRef, String methodId, ByteString args) {
-        try {
-        	byte[] bytes_request = empacotaMensagem(objectRef, methodId, args);
-            
-            client.sendResquest(bytes_request);
-            
-            Message response_message = null;
-            byte[] bytes_response = null;
-            
-            int qtd_envios = 1;
-            
-            while (qtd_envios <= MAX_ENVIOS) {
-            	client.socket.setSoTimeout(1500);
-            	try {
-            		bytes_response = client.getResponse();
-            		response_message = desempacotaMensagem(bytes_response);
-            		
-            		if (response_message.getId() == (requestId - 1)) {
-            			return response_message.getArgs().toByteArray();
-            		}
-            	} catch (SocketTimeoutException e) {
-					System.out.println("SocketTimeoutException " + e.getMessage());
-					client.sendResquest(bytes_request);
-					qtd_envios++;
-            	} catch (IOException e) {
-            		System.out.println("IOException " + e.getMessage());
-				}
-            }
-
-        } catch(SocketException e) {
-        	System.out.println("SocketException " + e.getMessage());
+    	byte[] bytes_request = empacotaMensagem(objectRef, methodId, args);
+        int qtd_envios = 0;
+        
+        while (qtd_envios <= MAX_ENVIOS) {
+        	client.sendResquest(bytes_request);
+        	qtd_envios++;
+        	try {
+        		Message response_message = desempacotaMensagem(client.getResponse());
+        		if (response_message.getId() == (requestId - 1)) {
+        			return response_message.getArgs().toByteArray();
+        		}
+        	} catch (SocketTimeoutException e) {
+				System.out.println("SocketTimeoutException " + e.getMessage());
+				System.out.println("Timeout exceeded");
+        	} catch (IOException e) {
+        		System.out.println("IOException " + e.getMessage());
+			}
         }
         
-        return "Servidor morreu".getBytes();
+        return "Não obteve resposta".getBytes();
 	}
 }

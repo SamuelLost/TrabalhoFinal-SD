@@ -3,6 +3,7 @@ package server;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.Map;
 import java.util.TreeMap;
@@ -37,7 +38,7 @@ public class UDPServer {
                 // Verifica se a requisição já foi tratada e se já tem resposta
                 if (mapa.containsKey(message_request.getId())) {
                     // Envia a resposta empacotada
-                    sendResponse(mapa.get(message_request.getId()));
+                    sendResponse(mapa.get(message_request.getId()), request.getAddress(), request.getPort());
                 } else {
                     // Resolve a requisição e salva a resposta
                     ByteString byteString_response = despachante.invoke(message_request);
@@ -46,7 +47,7 @@ public class UDPServer {
                     byte[] bytes_packed_response = empacotaResposta(message_request, byteString_response);
 
                     // Envia a resposta empacotada
-                    sendResponse(bytes_packed_response);
+                    sendResponse(bytes_packed_response, request.getAddress(), request.getPort());
 
                     // Coloca a requisição dentro do mapa com a o id e resposta
                     mapa.put(message_request.getId(), bytes_packed_response);
@@ -70,6 +71,7 @@ public class UDPServer {
      */
     public static byte[] getRequest() throws IOException {
         request = new DatagramPacket(buffer, buffer.length);
+        
         aSocket.receive(request);
 
         //Removendo o lixo
@@ -85,9 +87,9 @@ public class UDPServer {
      * Método para enviar uma resposta ao cliente
      * @param response - conteúdo a ser enviado
      */
-    public static void sendResponse(byte[] response) {
+    public static void sendResponse(byte[] response, InetAddress clientHost, int clientPort) {
         try {
-            reply = new DatagramPacket(response, response.length, request.getAddress(), request.getPort());
+            reply = new DatagramPacket(response, response.length, clientHost, clientPort);
             aSocket.send(reply);
         } catch (IOException e) {
             System.out.println("IO Exception: " + e.getMessage());
@@ -102,17 +104,11 @@ public class UDPServer {
      */
     public static byte[] empacotaResposta(Message message, ByteString args) {
         Message.Builder message_response = Message.newBuilder();
-
         message_response.setType(1); // 1 -> response
-
         message_response.setId(message.getId());
-
         message_response.setObjReference(message.getObjReference());
-
         message_response.setMethodId(message.getMethodId());
-
         message_response.setArgs(args);
-
         return message_response.build().toByteArray();
     }
 

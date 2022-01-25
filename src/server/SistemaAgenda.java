@@ -12,14 +12,15 @@ import com.trabalhoFinal.protos.AgendaProto.Contato.Telefone;
 import com.trabalhoFinal.protos.AgendaProto.Contato.Endereco;
 import com.trabalhoFinal.protos.AgendaProto.Contato.Email;
 
-public class SistemaAgenda {    
+public class SistemaAgenda {
     private static final String FILENAME = "agenda.txt"; 
     
     /**
-     * Método para ler um arquivo de entrada
-     * @return arquivo de entrada
+     * Método para ler o arquivo de entrada para Agenda.Builder
+     * @return void
+     * @throws IOException lançado pelo método mergeFrom
      */
-	private FileInputStream lerArquivoEntrada() {
+	private void lerArquivoEntrada(Agenda.Builder agenda) throws IOException {
 		File f = new File(FILENAME);
 		if(!f.exists()){
 			try {
@@ -28,27 +29,34 @@ public class SistemaAgenda {
 				System.out.println("IOException: " + e.getMessage());
 			}
 		}
+		
 		FileInputStream inputStream = null;
 		try {
 			inputStream = new FileInputStream(f);
 		} catch (FileNotFoundException e) {
 			System.out.println(FILENAME + ": File not found.  Creating a new file.");
 		}
-    	return inputStream;
+		// Lê do arquivo e salva em agenda
+		agenda.mergeFrom(inputStream);
+		
+		inputStream.close();
 	}
 	
     /**
      * Método para ler arquivo de saída
-     * @return arquivo de saída
+     * @return void
+     * @throws IOException lançado pelo método writeTo
      */
-	private FileOutputStream lerArquivoSaida() {
+	private void escreverArquivoSaida(Agenda.Builder agenda) throws IOException {
 		FileOutputStream outputStream = null;
 		try {
 			outputStream = new FileOutputStream(FILENAME);
 		} catch (FileNotFoundException e) {
 			System.out.println(FILENAME + ": File not found.  Creating a new file.");
 		}
-    	return outputStream;
+		agenda.build().writeTo(outputStream);
+		
+		outputStream.close();
 	}
 	
     /**
@@ -62,19 +70,13 @@ public class SistemaAgenda {
      * e a agenda é escrita serializada no arquivo através de writeTo().
      * @param contato
      * @return
-     * @throws IOException
+     * @throws IOExceptionlerArquivoEntrada
      */
-    public Boolean addContato(Contato contato) throws IOException {
+    public Boolean adicionarContato(Contato contato) throws IOException {
     	Agenda.Builder agenda = Agenda.newBuilder();
 
     	// ler arquivo
-    	FileInputStream inputStream = lerArquivoEntrada();
-
-		// Lê do arquivo e salva em agenda
-		agenda.mergeFrom(inputStream);
-
-		// fechar arquivo
-		inputStream.close();
+    	lerArquivoEntrada(agenda);
 
 		Boolean result = true;
 		for (Contato _contato : agenda.getContatosList()) {
@@ -88,15 +90,9 @@ public class SistemaAgenda {
     		agenda.addContatos(contato);
     	}
     	
-    	// ler arquivo
-    	FileOutputStream outputStream = lerArquivoSaida();
+    	// escrever arquivo
+    	escreverArquivoSaida(agenda);
 
-		// Lê da agenda e salva no arquivo
-		agenda.build().writeTo(outputStream);
-
-		// fechar arquivo
-		outputStream.close();
-		
     	return result;
     }
 
@@ -105,34 +101,24 @@ public class SistemaAgenda {
      * @return
      * @throws IOException
      */
-    public Agenda listarContato() throws IOException {
+    public Agenda listarContatos() throws IOException {
     	Agenda.Builder agenda = Agenda.newBuilder();
     	
     	// ler arquivo
-    	FileInputStream inputStream = lerArquivoEntrada();
+    	lerArquivoEntrada(agenda);
 
-		// Lê do arquivo e salva em agenda
-		agenda.mergeFrom(inputStream);
-
-		// fechar arquivo
-		inputStream.close();
-		
     	return agenda.build();
     }
 
-    public Agenda buscarContato(String busca) throws IOException {
+    public Agenda procurarContato(Contato contato) throws IOException {
+    	String busca = contato.getNome();
+    	
     	Agenda.Builder agenda_retorno = Agenda.newBuilder();
     	
     	Agenda.Builder agenda = Agenda.newBuilder();
     	
     	// ler arquivo
-    	FileInputStream inputStream = lerArquivoEntrada();
-
-		// Lê do arquivo e salva em agenda
-		agenda.mergeFrom(inputStream);
-
-		// fechar arquivo
-		inputStream.close();
+    	lerArquivoEntrada(agenda);
 		
 		for (Contato _contato : agenda.getContatosList()) {
 			boolean contain = false;
@@ -162,28 +148,20 @@ public class SistemaAgenda {
         return agenda_retorno.build();
     }
 
-    public Boolean removerContato(String nome) throws IOException {
+    public Boolean removerContato(Contato contato) throws IOException {
+    	String nome = contato.getNome();
+    	
 		Agenda.Builder agenda = Agenda.newBuilder();
+		
     	// ler arquivo
-    	FileInputStream inputStream = lerArquivoEntrada();
+    	lerArquivoEntrada(agenda);
 
-		// Lê do arquivo e salva em agenda
-		agenda.mergeFrom(inputStream);
-
-		// fechar arquivo
-		inputStream.close();
-		int index=0;
-		for (Contato contato : agenda.getContatosList()) {
-			if (contato.getNome().equals(nome)) {
+		int index = 0;
+		for (Contato _contato : agenda.getContatosList()) {
+			if (_contato.getNome().equals(nome)) {
 				agenda.removeContatos(index);
-				// ler arquivo
-				FileOutputStream outputStream = lerArquivoSaida();
-
-				// Lê da agenda e salva no arquivo
-				agenda.build().writeTo(outputStream);
-
-				// fechar arquivo
-				outputStream.close();
+				// escrever arquivo
+				escreverArquivoSaida(agenda);
 				return true;
 			}
 			index++;
@@ -191,55 +169,38 @@ public class SistemaAgenda {
     	return false;
     }
 
-    public Boolean cleanAgenda() throws IOException {
+    public Boolean limparAgenda() throws IOException {
 	   Agenda.Builder agenda = Agenda.newBuilder();
-
+		
 	   // ler arquivo
-	   FileInputStream inputStream = lerArquivoEntrada();
-
-	   // Lê do arquivo e salva em agenda
-	   agenda.mergeFrom(inputStream);
-
-	   // fechar arquivo
-	   inputStream.close();
-
-
-
-	   // ler arquivo
-	  FileOutputStream outputStream = lerArquivoSaida();
+	   lerArquivoEntrada(agenda);
+	
 	   agenda.clearContatos();
-		agenda.build().writeTo(outputStream);
-	   // fechar arquivo
-		 outputStream.close();
-	   if (agenda.build().getContatosCount()==0) return true;
+	   
+	   // escrever arquivo
+	   escreverArquivoSaida(agenda);
+		   
+	   if (agenda.build().getContatosCount() == 0) return true;
+	   
 	   else return false;
 	}
 
-	public Boolean editContato(Contato contato) throws IOException {
+	public Boolean editarContato(Contato contato) throws IOException {
 		Agenda.Builder agenda = Agenda.newBuilder();
 		// ler arquivo
-		FileInputStream inputStream = lerArquivoEntrada();
-		// Lê do arquivo e salva em agenda
-		agenda.mergeFrom(inputStream);
-		// fechar arquivo
-		inputStream.close();
-		int index=0;
+		lerArquivoEntrada(agenda);
+
+		int index = 0;
 		for (Contato _contato : agenda.getContatosList()) {
-			if (_contato.getNome().equals(contato.getNome())) {
-				agenda.setContatos(index,contato);
+			if (contato.getNome().equals(_contato.getNome())) {
+				agenda.setContatos(index, contato);
+				break;
 			}
 			index++;
 		}
 
-
-		// ler arquivo
-		FileOutputStream outputStream = lerArquivoSaida();
-
-		// Lê da agenda e salva no arquivo
-		agenda.build().writeTo(outputStream);
-
-		// fechar arquivo
-		outputStream.close();
+		// escrever arquivo
+		escreverArquivoSaida(agenda);
 
 		return true;
 	}

@@ -8,14 +8,6 @@ import com.trabalhoFinal.protos.MessageProto.Message;
 
 public class Despachante {
     private static Despachante uniqueInstance;
-    private static AgendaEsqueleto esqueleto;
-    
-    /**
-     * Um Singleton para a classe Despachante
-     */
-    private Despachante(){
-    	esqueleto = AgendaEsqueleto.getInstance();
-    }
 
     /**
      * Método para poder pegar uma instancia de Despachante de

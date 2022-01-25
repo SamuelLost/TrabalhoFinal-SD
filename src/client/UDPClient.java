@@ -20,6 +20,7 @@ public class UDPClient {
     public UDPClient() {
         try {
             socket = new DatagramSocket();
+            socket.setSoTimeout(1500);
             aHost = InetAddress.getByName("localhost");
             serverPort = 6789; 
         } catch (SocketException e) {
