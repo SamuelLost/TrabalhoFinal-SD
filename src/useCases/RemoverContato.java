@@ -57,12 +57,11 @@ public class RemoverContato {
 		String indice = "";
 		
 		int indexContato = 1;
-		
-		// abc
+
 		while (true) {
 			indice = stdin.readLine();
 			boolean isNumeric =  indice.matches("[+-]?\\d*(\\.\\d+)?");
-			if (!isNumeric) {
+			if (!isNumeric || indice.isEmpty()) {
 				System.out.println("Opção inválida! Digite o index do contato que deseja remover: ");
 				continue;
 			}

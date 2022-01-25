@@ -49,8 +49,6 @@ public class Despachante {
             //Pegando o nome do método
 	    	String methodName = request.getMethodId();
 	    	
-	    	System.out.println("Executando: " + methodName);
-
             //O método que contém dentro do objeto referenciado, através
             //do método getMethod() passando o nome do método e tipo do argumento.
 			method = objRef.getMethod(methodName, ByteString.class);
@@ -59,6 +57,8 @@ public class Despachante {
             //Chama o método invoke da Classe Method passando a nova instância do objeto
             //referenciado e os argumentos para o método.
 			resposta = (ByteString) (method.invoke(objRef.getDeclaredConstructor().newInstance(), request.getArgs()));
+			
+			System.out.println("Executando: " + methodName);
 		} catch (NoSuchMethodException e) {
 			System.out.println("NoSuchMethodException server.Despachante: " + e.getMessage());
 		} catch (SecurityException e) {

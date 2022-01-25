@@ -68,7 +68,7 @@ public class EditarContato {
 		while (true) {
 			indice = stdin.readLine();
 			boolean isNumeric =  indice.matches("[+-]?\\d*(\\.\\d+)?");
-			if (!isNumeric) {
+			if (!isNumeric || indice.isEmpty()) {
 				System.out.println("Opção inválida! Digite o index do contato que deseja editar: ");
 				continue;
 			}
@@ -153,7 +153,7 @@ public class EditarContato {
 					break;
 				}
 				boolean isNumeric =  indice.matches("[+-]?\\d*(\\.\\d+)?");
-				if (!isNumeric) {
+				if (!isNumeric || indice.isEmpty()) {
 					System.out.println("Opção inválida! Digite o index do telefone que deseja remover: ");
 					continue;
 				}
@@ -220,7 +220,7 @@ public class EditarContato {
 					break;
 				}
 				boolean isNumeric =  indice.matches("[+-]?\\d*(\\.\\d+)?");
-				if (!isNumeric) {
+				if (!isNumeric || indice.isEmpty()) {
 					System.out.println("Opção inválida! Digite o index do telefone que deseja remover: ");
 					continue;
 				}
@@ -291,7 +291,7 @@ public class EditarContato {
 					break;
 				}
 				boolean isNumeric =  indice.matches("[+-]?\\d*(\\.\\d+)?");
-				if (!isNumeric) {
+				if (!isNumeric || indice.isEmpty()) {
 					System.out.println("Opção inválida! Digite o index do e-mail que deseja remover: ");
 					continue;
 				}

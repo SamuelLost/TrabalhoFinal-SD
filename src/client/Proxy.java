@@ -6,16 +6,14 @@ import java.util.List;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.trabalhoFinal.protos.MessageProto.Message;
 
 import exceptions.NullNameException;
 
 import com.trabalhoFinal.protos.AgendaProto.Agenda;
 import com.trabalhoFinal.protos.AgendaProto.Contato;
+import com.trabalhoFinal.protos.MessageProto.Message;
 
-public class Proxy {
-	final int MAX_ENVIOS = 10;
-	
+public class Proxy {	
 	private int requestId = 0;
     private UDPClient client;
 
@@ -60,7 +58,7 @@ public class Proxy {
      */
     public List<Contato> listarContatos() {
         //Obtendo a resposta
-    	byte[] resp = doOperation("Agenda", "listarContatos", ByteString.copyFrom(" ".getBytes()));
+    	byte[] resp = doOperation("Agenda", "listarContatos", ByteString.copyFrom("listarContatos".getBytes()));
 
         //Transformando a resposta em ByteString
     	ByteString byteString = ByteString.copyFrom(resp);
@@ -86,7 +84,10 @@ public class Proxy {
      * @return List - com os contatos que se encaixam na busca
      */
     public List<Contato> procurarContatos(Contato contato) {
-        byte[] resp = doOperation("Agenda", "procurarContatos", ByteString.copyFrom(contato.toByteArray()));
+        //Transformando em ByteString o objeto contato serializado em byte[]
+        ByteString args = contato.toByteString();
+    	
+        byte[] resp = doOperation("Agenda", "procurarContatos", args);
 
     	ByteString byteString = ByteString.copyFrom(resp);
     	
@@ -216,11 +217,9 @@ public class Proxy {
      */
 	public byte[] doOperation(String objectRef, String methodId, ByteString args) {
     	byte[] bytes_request = empacotaMenssagem(objectRef, methodId, args);
-        int qtd_envios = 0;
         
-        while (qtd_envios <= MAX_ENVIOS) {
+        while (true) {
         	client.sendResquest(bytes_request);
-        	qtd_envios++;
         	try {
         		Message response_message = desempacotaMenssagem(client.getResponse());
         		if (response_message.getId() == (requestId - 1)) {
@@ -233,7 +232,5 @@ public class Proxy {
         		System.out.println("IOException " + e.getMessage());
 			}
         }
-        
-        return "Não obteve resposta".getBytes();
 	}
 }

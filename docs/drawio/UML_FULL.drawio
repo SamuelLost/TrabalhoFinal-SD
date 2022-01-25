@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="Bl6PnjhjwC42AaLjEG6b" name="Page-1">
-        <mxGraphModel dx="2780" dy="2121" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+        <mxGraphModel dx="1818" dy="1457" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -82,7 +82,7 @@
                 <mxCell id="25" value="- socket : DatagramSocket&#10;- aHost : InetAddress&#10;- request : DatagramPacket&#10;- reply : DatagramPacket" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=22;" parent="24" vertex="1">
                     <mxGeometry y="26" width="470" height="104" as="geometry"/>
                 </mxCell>
-                <mxCell id="112" value="- TIMEOUT = 1500 : Interger&#10;- PORT = 6789&#10;- IP = &quot;127.0.0.1&quot;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=22;fontStyle=4" vertex="1" parent="24">
+                <mxCell id="112" value="- TIMEOUT = 1500 : Interger&#10;- PORT = 6789&#10;- IP = &quot;127.0.0.1&quot;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=22;fontStyle=4" parent="24" vertex="1">
                     <mxGeometry y="130" width="470" height="90" as="geometry"/>
                 </mxCell>
                 <mxCell id="26" value="" style="line;strokeWidth=2;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;fontSize=22;" parent="24" vertex="1">
@@ -94,7 +94,7 @@
                 <mxCell id="29" value="UDPServer" style="swimlane;fontStyle=1;align=center;verticalAlign=bottom;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fontSize=22;strokeColor=#000000;strokeWidth=2;fillColor=#1ba1e2;fontColor=#ffffff;" parent="1" vertex="1">
                     <mxGeometry x="1169" y="80" width="670" height="366" as="geometry"/>
                 </mxCell>
-                <mxCell id="113" value="- PORT = 6789 : Integer" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=22;fontStyle=4" vertex="1" parent="29">
+                <mxCell id="113" value="- PORT = 6789 : Integer" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=22;fontStyle=4" parent="29" vertex="1">
                     <mxGeometry y="26" width="670" height="26" as="geometry"/>
                 </mxCell>
                 <mxCell id="30" value="- aSocket : DatagramSocket&#10;- despachante : Despachante&#10;- buffer : byte[ ]&#10;- request : DatagramPacket&#10;- reply : DatagramPacket&#10;- mapa : Map&lt;Integer, byte [ ]&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=22;" parent="29" vertex="1">
@@ -262,7 +262,7 @@
                 <mxCell id="108" value="Message" style="swimlane;fontStyle=1;align=center;verticalAlign=bottom;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fontSize=22;strokeColor=#000000;strokeWidth=2;fillColor=#1ba1e2;fontColor=#ffffff;" parent="1" vertex="1">
                     <mxGeometry x="1249" y="2140" width="510" height="170" as="geometry"/>
                 </mxCell>
-                <mxCell id="109" value="- type : int&#10;- id : int&#10;- objReference : int&#10;- methodId : String&#10;- args : ByteString" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=22;strokeWidth=2;" parent="108" vertex="1">
+                <mxCell id="109" value="- type : int&#10;- id : int&#10;- objReference : String&#10;- methodId : String&#10;- args : ByteString" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=22;strokeWidth=2;" parent="108" vertex="1">
                     <mxGeometry y="26" width="510" height="144" as="geometry"/>
                 </mxCell>
             </root>

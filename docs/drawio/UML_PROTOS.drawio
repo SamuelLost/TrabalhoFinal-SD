@@ -1,0 +1,31 @@
+<mxfile host="65bd71144e">
+    <diagram id="CSLDY5jSYY38JrGB3NhZ" name="Página-1">
+        <mxGraphModel dx="-178" dy="-539" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="&lt;p style=&quot;line-height: 2.6 ; font-size: 36px&quot;&gt;Protos&lt;/p&gt;" style="shape=folder;fontStyle=1;spacingTop=10;tabWidth=40;tabHeight=14;tabPosition=left;html=1;verticalAlign=top;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="1016" y="1778" width="976" height="580" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Contato" style="swimlane;fontStyle=1;align=center;verticalAlign=bottom;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fontSize=22;strokeColor=#000000;strokeWidth=2;fillColor=#1ba1e2;fontColor=#ffffff;" parent="1" vertex="1">
+                    <mxGeometry x="1081.24" y="1950" width="389.5" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="- nome : String&#10;- tipo : Enum&#10;- emails[ ] : Email&#10;- telefones[ ] : Telefone&#10;- enderecos[ ] : Endereco" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=22;strokeWidth=2;" parent="3" vertex="1">
+                    <mxGeometry y="26" width="389.5" height="144" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Agenda" style="swimlane;fontStyle=1;align=center;verticalAlign=bottom;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fontSize=22;strokeColor=#000000;strokeWidth=2;fillColor=#1ba1e2;fontColor=#ffffff;" parent="1" vertex="1">
+                    <mxGeometry x="1521.24" y="1950" width="389.5" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="- contatos[ ] : Contato" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=22;strokeWidth=2;" parent="5" vertex="1">
+                    <mxGeometry y="26" width="389.5" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Message" style="swimlane;fontStyle=1;align=center;verticalAlign=bottom;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;fontSize=22;strokeColor=#000000;strokeWidth=2;fillColor=#1ba1e2;fontColor=#ffffff;" parent="1" vertex="1">
+                    <mxGeometry x="1249" y="2140" width="510" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="- type : int&#10;- id : int&#10;- objReference : String&#10;- methodId : String&#10;- args : ByteString" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontSize=22;strokeWidth=2;" parent="7" vertex="1">
+                    <mxGeometry y="26" width="510" height="144" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

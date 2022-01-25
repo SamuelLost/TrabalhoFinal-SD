@@ -12,7 +12,6 @@ public class UDPClient {
 	private final Integer PORT = 6789;
 	private final String IP = "127.0.0.1";
 	
-	
     private DatagramSocket socket;
     private InetAddress aHost;
     private int serverPort;

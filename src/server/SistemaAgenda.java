@@ -178,6 +178,7 @@ public class SistemaAgenda {
 			}
 			index++;
 		}
+
     	return false;
     }
 
@@ -196,9 +197,7 @@ public class SistemaAgenda {
 	   // escrever arquivo
 	   escreverArquivoSaida(agenda);
 		   
-	   if (agenda.build().getContatosCount() == 0) return true;
-	   
-	   else return false;
+	   return (agenda.build().getContatosCount() == 0 ? true : false);
 	}
 
     /**
