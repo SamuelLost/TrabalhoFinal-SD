@@ -177,7 +177,7 @@ public class Proxy {
      * @param args: os argumentos para o método
      * @return byte[]: a requisição empacotada e serializada.
      */
-    public byte[] empacotaMensagem(String objectRef, String method, ByteString args) {
+    public byte[] empacotaMenssagem(String objectRef, String method, ByteString args) {
         Message.Builder message = Message.newBuilder()
 	    		.setType(0)
 	    		.setId(requestId++)
@@ -194,7 +194,7 @@ public class Proxy {
      * @param resposta: a resposta serializada
      * @return retorna a resposta empacotada
      */
-    public static Message desempacotaMensagem(byte[] resposta) {
+    public static Message desempacotaMenssagem(byte[] resposta) {
     	Message message = null;
 		try {
 			message = Message.parseFrom(resposta);
@@ -215,14 +215,14 @@ public class Proxy {
      * @return a resposta em byte[]
      */
 	public byte[] doOperation(String objectRef, String methodId, ByteString args) {
-    	byte[] bytes_request = empacotaMensagem(objectRef, methodId, args);
+    	byte[] bytes_request = empacotaMenssagem(objectRef, methodId, args);
         int qtd_envios = 0;
         
         while (qtd_envios <= MAX_ENVIOS) {
         	client.sendResquest(bytes_request);
         	qtd_envios++;
         	try {
-        		Message response_message = desempacotaMensagem(client.getResponse());
+        		Message response_message = desempacotaMenssagem(client.getResponse());
         		if (response_message.getId() == (requestId - 1)) {
         			return response_message.getArgs().toByteArray();
         		}

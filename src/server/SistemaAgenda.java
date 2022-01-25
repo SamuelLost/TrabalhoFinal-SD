@@ -19,7 +19,6 @@ public class SistemaAgenda {
      * Método para ler o arquivo de entrada para Agenda.Builder
      * @param agenda: builder de Agenda para ler do arquivo
      * @return void
-     * @throws IOException lançado pelo método mergeFrom
      */
 	private void lerArquivoEntrada(Agenda.Builder agenda) {
 		File f = new File(FILENAME);
@@ -50,7 +49,6 @@ public class SistemaAgenda {
      * Método para escrever no arquivo de saída
      * @param agenda: builder de Agenda para escrever no arquivo
      * @return void
-     * @throws IOException lançado pelo método writeTo
      */
 	private void escreverArquivoSaida(Agenda.Builder agenda) {
 		FileOutputStream outputStream = null;

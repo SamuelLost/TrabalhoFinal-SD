@@ -13,14 +13,18 @@ import com.trabalhoFinal.protos.AgendaProto.Contato.Telefone;
 import client.Proxy;
 
 public class AdicionarContato {
-	Proxy proxy;
-	BufferedReader stdin;
+	private Proxy proxy;
+	private BufferedReader stdin;
 
 	public AdicionarContato(Proxy proxy, BufferedReader stdin) {
 		this.proxy = proxy;
 		this.stdin = stdin;
 	}
 	
+    /**
+     * Método que faz a interação com o usário para adioconar o contato
+     * @throws IOException - readLine()
+     */
 	public void adicionaContato() throws IOException {
         //Criando o objeto Contato presente no .proto
         Contato.Builder contato = Contato.newBuilder();

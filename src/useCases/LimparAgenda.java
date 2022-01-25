@@ -2,8 +2,6 @@ package useCases;
 
 import java.io.BufferedReader;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-
 import client.Proxy;
 
 public class LimparAgenda {
@@ -13,7 +11,8 @@ public class LimparAgenda {
 		this.proxy = proxy;
 	}
 
-	public void limparAgenda() throws InvalidProtocolBufferException {
+    //Método para limpar a agenda, e consultar o resutado
+	public void limparAgenda() {
 		Boolean result = proxy.limparAgenda();
 		if (result) {
 			System.out.println("Agenda limpa com sucesso");

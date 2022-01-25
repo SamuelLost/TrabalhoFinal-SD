@@ -76,12 +76,12 @@ public class AgendaEsqueleto {
      * Obtém a resposta, transforma em ByteString.
      * @param args - ByteString: argumentos 
      * @return ByteString: resposta
-     * @throws IOException - gerada pelo método editContato()
      */
     public ByteString editarContato(ByteString args) {
-        //Desserializa
+        
         Agenda agendaAuxiliar = null;
 		try {
+            //Desserializa
 			agendaAuxiliar = Agenda.parseFrom(args.toByteArray());
 		} catch (InvalidProtocolBufferException e) {
 			System.out.println("InvalidProtocolBufferException server.AgendaEsqueleto: " + e.getMessage());

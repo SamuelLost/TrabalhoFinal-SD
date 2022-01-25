@@ -20,12 +20,15 @@ public class RemoverContato {
 		this.stdin = stdin;
 	}
 	
+    /**
+     * Interação para remover um contato. Recebe o resultado e imprime na tela.
+     * @throws IOException readLine()
+     */
 	public void removerContato() throws IOException {
         //Lista dos contatos existentes
 		List<Contato> listaContatos = proxy.listarContatos();
 		
 		int index = 1;
-		String aux;
         //Percorrendo o contato
 		for (Contato _contato : listaContatos) {
 			System.out.println("Index: " + index);

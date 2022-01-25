@@ -16,14 +16,18 @@ import exceptions.NullNameException;
 import views.Tela;
 
 public class EditarContato {
-	Proxy proxy;
-	BufferedReader stdin;
+	private Proxy proxy;
+	private BufferedReader stdin;
 
 	public EditarContato(Proxy proxy, BufferedReader stdin) {
 		this.proxy = proxy;
 		this.stdin = stdin;
 	}
-
+    /**
+     * Método que faz a interação com o usário para adioconar o contato
+     * @throws NumberFormatException - número no formato errado
+     * @throws IOException - readLine()
+     */
 	public void editarContato() throws NumberFormatException, IOException {
 		
         //Lista dos contatos existentes

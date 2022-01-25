@@ -3,7 +3,6 @@ package useCases;
 import java.io.BufferedReader;
 import java.util.List;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.trabalhoFinal.protos.AgendaProto.Contato;
 import com.trabalhoFinal.protos.AgendaProto.Contato.Email;
 import com.trabalhoFinal.protos.AgendaProto.Contato.Endereco;
@@ -12,15 +11,16 @@ import com.trabalhoFinal.protos.AgendaProto.Contato.Telefone;
 import client.Proxy;
 
 public class ListarContatos {
-	Proxy proxy;
-	BufferedReader stdin;
+	private Proxy proxy;
 
 	public ListarContatos(Proxy proxy, BufferedReader stdin) {
 		this.proxy = proxy;
-		this.stdin = stdin;
 	}
 	
-	public void listarContatos() throws InvalidProtocolBufferException {
+    /**
+     * Lista e imprime todos os contatos da agenda
+     */
+	public void listarContatos() {
         //Lista com os contatos existentes
 		List<Contato> listaContatos = proxy.listarContatos();
         //Percorrendo os contatos

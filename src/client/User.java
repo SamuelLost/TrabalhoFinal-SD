@@ -13,7 +13,6 @@ import useCases.RemoverContato;
 import views.Tela;
 
 import java.io.IOException;
-import java.util.Scanner;
 
 public class User {
 	// Classe Proxy que disponibiliza os métodos

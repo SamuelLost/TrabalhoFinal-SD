@@ -12,14 +12,18 @@ import com.trabalhoFinal.protos.AgendaProto.Contato.Telefone;
 import client.Proxy;
 
 public class ProcurarContatos {
-	Proxy proxy;
-	BufferedReader stdin;
+	private Proxy proxy;
+	private BufferedReader stdin;
 
 	public ProcurarContatos(Proxy proxy, BufferedReader stdin) {
 		this.proxy = proxy;
 		this.stdin = stdin;
 	}
 	
+    /**
+     * Interação para procurar um contato. Recebe o retorno e imprime na tela
+     * @throws IOException - readLine()
+     */
 	public void procurarContatos() throws IOException {
 		System.out.println("Digite sua busca: ");
 		

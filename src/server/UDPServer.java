@@ -58,8 +58,6 @@ public class UDPServer {
             }
         } catch (SocketException e) {
             System.out.println("Socket: " + e.getMessage());
-        } catch (IOException e) {
-            System.out.println("IO: " + e.getMessage());
         } finally {
             if (aSocket != null)
                 aSocket.close();
@@ -69,7 +67,6 @@ public class UDPServer {
     /**
      * Método para pegar a requisição enviada pelo cliente
      * @return - byte[]: requisição
-     * @throws IOException - lançada pelo receive()
      */
     public static byte[] getRequest() {
         request = new DatagramPacket(buffer, buffer.length);
@@ -122,7 +119,6 @@ public class UDPServer {
      * Desserializa a requisição com o método parseFrom()
      * @param request - requisição serializada
      * @return a requisição empacotada em Message
-     * @throws InvalidProtocolBufferException - gerada pelo método parseFrom()
      */
     public static Message desempacotaRequisicao(byte[] request) {
         Message message = null;
