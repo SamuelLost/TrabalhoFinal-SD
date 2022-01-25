@@ -17,10 +17,11 @@ public class SistemaAgenda {
     
     /**
      * Método para ler o arquivo de entrada para Agenda.Builder
+     * @param agenda: builder de Agenda para ler do arquivo
      * @return void
      * @throws IOException lançado pelo método mergeFrom
      */
-	private void lerArquivoEntrada(Agenda.Builder agenda) throws IOException {
+	private void lerArquivoEntrada(Agenda.Builder agenda) {
 		File f = new File(FILENAME);
 		if(!f.exists()){
 			try {
@@ -37,26 +38,33 @@ public class SistemaAgenda {
 			System.out.println(FILENAME + ": File not found.  Creating a new file.");
 		}
 		// Lê do arquivo e salva em agenda
-		agenda.mergeFrom(inputStream);
-		
-		inputStream.close();
+		try {
+			agenda.mergeFrom(inputStream);
+			inputStream.close();
+		} catch (IOException e) {
+			System.out.println("IOException server.AgendaEsqueleto: " + e.getMessage());
+		}
 	}
 	
     /**
-     * Método para ler arquivo de saída
+     * Método para escrever no arquivo de saída
+     * @param agenda: builder de Agenda para escrever no arquivo
      * @return void
      * @throws IOException lançado pelo método writeTo
      */
-	private void escreverArquivoSaida(Agenda.Builder agenda) throws IOException {
+	private void escreverArquivoSaida(Agenda.Builder agenda) {
 		FileOutputStream outputStream = null;
 		try {
 			outputStream = new FileOutputStream(FILENAME);
 		} catch (FileNotFoundException e) {
 			System.out.println(FILENAME + ": File not found.  Creating a new file.");
 		}
-		agenda.build().writeTo(outputStream);
-		
-		outputStream.close();
+		try {
+			agenda.build().writeTo(outputStream);
+			outputStream.close();
+		} catch (IOException e) {
+			System.out.println("IOException server.AgendaEsqueleto: " + e.getMessage());
+		}
 	}
 	
     /**
@@ -68,11 +76,10 @@ public class SistemaAgenda {
      * algum contato com o mesmo nome, caso existe não é possível
      * adicionar. Caso contrário, o contato é adicionado na agenda
      * e a agenda é escrita serializada no arquivo através de writeTo().
-     * @param contato
-     * @return
-     * @throws IOExceptionlerArquivoEntrada
+     * @param contato - Contato que será adicionado na agenda
+     * @return boolean - true caso tenha adicionado, false caso contrário
      */
-    public Boolean adicionarContato(Contato contato) throws IOException {
+    public Boolean adicionarContato(Contato contato) {
     	Agenda.Builder agenda = Agenda.newBuilder();
 
     	// ler arquivo
@@ -97,11 +104,10 @@ public class SistemaAgenda {
     }
 
     /**
-     * 
-     * @return
-     * @throws IOException
+     * Método para listar os contatos da Agenda
+     * @return Agenda - agenda com os contatos
      */
-    public Agenda listarContatos() throws IOException {
+    public Agenda listarContatos() {
     	Agenda.Builder agenda = Agenda.newBuilder();
     	
     	// ler arquivo
@@ -110,7 +116,12 @@ public class SistemaAgenda {
     	return agenda.build();
     }
 
-    public Agenda procurarContato(Contato contato) throws IOException {
+    /**
+     * Método para buscar contatos na agenda. A busca será feita pelo nome, pelos telefones, endereços e e-mails.
+     * @param contato - contato com o nome que será buscado na agenda
+     * @return agenda com os contatos que foram encontrados com a busca
+     */
+    public Agenda procurarContato(Contato contato) {
     	String busca = contato.getNome();
     	
     	Agenda.Builder agenda_retorno = Agenda.newBuilder();
@@ -148,9 +159,12 @@ public class SistemaAgenda {
         return agenda_retorno.build();
     }
 
-    public Boolean removerContato(Contato contato) throws IOException {
-    	String nome = contato.getNome();
-    	
+    /**
+     * Método para remover um contato da agenda.
+     * @param contato - objeto contato que será removido da agenda
+     * @return booleano - true caso tenha dado certo remover, false caso contrário
+     */
+    public Boolean removerContato(Contato contato) {
 		Agenda.Builder agenda = Agenda.newBuilder();
 		
     	// ler arquivo
@@ -158,7 +172,7 @@ public class SistemaAgenda {
 
 		int index = 0;
 		for (Contato _contato : agenda.getContatosList()) {
-			if (_contato.getNome().equals(nome)) {
+			if (_contato.equals(contato)) {
 				agenda.removeContatos(index);
 				// escrever arquivo
 				escreverArquivoSaida(agenda);
@@ -169,7 +183,11 @@ public class SistemaAgenda {
     	return false;
     }
 
-    public Boolean limparAgenda() throws IOException {
+    /**
+     * Método para remover todos os contatos da agenda
+     * @return booleano - true caso tenha dado certo limpar a agenda, false caso contrário
+     */
+    public Boolean limparAgenda() {
 	   Agenda.Builder agenda = Agenda.newBuilder();
 		
 	   // ler arquivo
@@ -185,15 +203,23 @@ public class SistemaAgenda {
 	   else return false;
 	}
 
-	public Boolean editarContato(Contato contato) throws IOException {
+    /**
+     * Método para editar um contato da agenda.
+     * @param agendaAuxiliar - agenda com o contato na posição 0 sendo o antigo, e na posição 1 sendo o atual
+     * @return booleano - true caso tenha dado certo editar, false caso contrário
+     */    
+	public Boolean editarContato(Agenda agendaAuxiliar) {
+		Contato oldContato = agendaAuxiliar.getContatos(0);
+		Contato newContato = agendaAuxiliar.getContatos(1);
+		
 		Agenda.Builder agenda = Agenda.newBuilder();
 		// ler arquivo
 		lerArquivoEntrada(agenda);
 
 		int index = 0;
 		for (Contato _contato : agenda.getContatosList()) {
-			if (contato.getNome().equals(_contato.getNome())) {
-				agenda.setContatos(index, contato);
+			if (_contato.equals(oldContato)) {
+				agenda.setContatos(index, newContato);
 				break;
 			}
 			index++;
@@ -202,6 +228,6 @@ public class SistemaAgenda {
 		// escrever arquivo
 		escreverArquivoSaida(agenda);
 
-		return true;
+		return (index == agenda.getContatosCount() ? false : true);
 	}
 }

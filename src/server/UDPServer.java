@@ -13,6 +13,8 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.trabalhoFinal.protos.MessageProto.Message;
 
 public class UDPServer {
+	private static final Integer PORT = 6789;
+	
     private static DatagramSocket aSocket;
     private static Despachante despachante;
     private static byte[] buffer = new byte[1024];
@@ -25,7 +27,7 @@ public class UDPServer {
         despachante = Despachante.getInstance();
         aSocket = null;
         try {
-            aSocket = new DatagramSocket(6789);
+            aSocket = new DatagramSocket(PORT);
             while (true) {
                 System.out.println("Servidor rodando...");
 
@@ -69,10 +71,14 @@ public class UDPServer {
      * @return - byte[]: requisição
      * @throws IOException - lançada pelo receive()
      */
-    public static byte[] getRequest() throws IOException {
+    public static byte[] getRequest() {
         request = new DatagramPacket(buffer, buffer.length);
         
-        aSocket.receive(request);
+        try {
+			aSocket.receive(request);
+		} catch (IOException e) {
+			System.out.println("IOException server.UDPServer: " + e.getMessage());
+		}
 
         //Removendo o lixo
         byte[] aux = new byte[request.getLength()];
@@ -92,7 +98,7 @@ public class UDPServer {
             reply = new DatagramPacket(response, response.length, clientHost, clientPort);
             aSocket.send(reply);
         } catch (IOException e) {
-            System.out.println("IO Exception: " + e.getMessage());
+            System.out.println("IOException server.UDPServer: " + e.getMessage());
         }
     }
 
@@ -103,23 +109,28 @@ public class UDPServer {
      * @return - a resposta empacotada e serializada
      */
     public static byte[] empacotaResposta(Message message, ByteString args) {
-        Message.Builder message_response = Message.newBuilder();
-        message_response.setType(1); // 1 -> response
-        message_response.setId(message.getId());
-        message_response.setObjReference(message.getObjReference());
-        message_response.setMethodId(message.getMethodId());
-        message_response.setArgs(args);
+        Message.Builder message_response = Message.newBuilder()
+		    .setType(1)
+		    .setId(message.getId())
+		    .setObjReference(message.getObjReference())
+		    .setMethodId(message.getMethodId())
+		    .setArgs(args);
         return message_response.build().toByteArray();
     }
 
     /**
      * Desserializa a requisição com o método parseFrom()
      * @param request - requisição serializada
-     * @return - a requisição empacotada em Message
+     * @return a requisição empacotada em Message
      * @throws InvalidProtocolBufferException - gerada pelo método parseFrom()
      */
-    public static Message desempacotaRequisicao(byte[] request) throws InvalidProtocolBufferException {
-        Message message = Message.parseFrom(request);
+    public static Message desempacotaRequisicao(byte[] request) {
+        Message message = null;
+		try {
+			message = Message.parseFrom(request);
+		} catch (InvalidProtocolBufferException e) {
+			System.out.println("InvalidProtocolBufferException server.UDPServer: " + e.getMessage());
+		}
         return message;
     }
 

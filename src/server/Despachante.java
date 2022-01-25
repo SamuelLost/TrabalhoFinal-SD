@@ -60,19 +60,19 @@ public class Despachante {
             //referenciado e os argumentos para o método.
 			resposta = (ByteString) (method.invoke(objRef.getDeclaredConstructor().newInstance(), request.getArgs()));
 		} catch (NoSuchMethodException e) {
-			System.out.println("NoSuchMethodException: " + e.getMessage());
+			System.out.println("NoSuchMethodException server.Despachante: " + e.getMessage());
 		} catch (SecurityException e) {
-			System.out.println("SecurityException: " + e.getMessage());
+			System.out.println("SecurityException server.Despachante: " + e.getMessage());
 		} catch (ClassNotFoundException e) {
-			System.out.println("ClassNotFoundException" + e.getMessage());
+			System.out.println("ClassNotFoundException server.Despachante: " + e.getMessage());
 		} catch (IllegalAccessException e) {
-			System.out.println("IllegalAccessException: " + e.getMessage());
+			System.out.println("IllegalAccessException server.Despachante: " + e.getMessage());
 		} catch (IllegalArgumentException e) {
-			System.out.println("IllegalArgumentException: " + e.getMessage());
+			System.out.println("IllegalArgumentException server.Despachante: " + e.getMessage());
 		} catch (InvocationTargetException e) {
-			System.out.println("InvocationTargetException: " + e.getMessage());
+			System.out.println("InvocationTargetException server.Despachante: " + e.getMessage());
 		} catch (InstantiationException e) {
-			System.out.println("InstantiationException: " + e.getMessage());
+			System.out.println("InstantiationException server.Despachante: " + e.getMessage());
 		}
     	
     	return resposta;

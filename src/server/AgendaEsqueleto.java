@@ -3,6 +3,7 @@ package server;
 import java.io.IOException;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.trabalhoFinal.protos.AgendaProto.Agenda;
 import com.trabalhoFinal.protos.AgendaProto.Contato;
 
@@ -21,11 +22,16 @@ public class AgendaEsqueleto {
      * @return - ByteString: resposta
      * @throws IOException - gerada pelos métodos addContato()
      */
-    public ByteString adicionarContato(ByteString args) throws IOException {
+    public ByteString adicionarContato(ByteString args) {
+    	Contato contato = null;
+		try {
+			contato = Contato.parseFrom(args.toByteArray());
+		} catch (InvalidProtocolBufferException e) {
+			System.out.println("InvalidProtocolBufferException server.AgendaEsqueleto: " + e.getMessage());
+		}
 
-    	Contato contato = Contato.parseFrom(args.toByteArray());
-
-    	Boolean response = agenda.adicionarContato(contato);
+    	Boolean response = null;
+		response = agenda.adicionarContato(contato);
 
     	return ByteString.copyFrom(response.toString().getBytes());
     }
@@ -40,11 +46,7 @@ public class AgendaEsqueleto {
     public ByteString listarContatos(ByteString args) {
     	Agenda agenda_response = null;
     	
-		try {
-			agenda_response = agenda.listarContatos();
-		} catch (IOException e) {
-			System.out.println("Erro aqui -> " + e.getMessage());
-		}
+		agenda_response = agenda.listarContatos();
 
     	return ByteString.copyFrom(agenda_response.toByteArray());
     }
@@ -53,11 +55,16 @@ public class AgendaEsqueleto {
      * Esqueleto do método buscarContatos() e chama o método correspondente na classe SistemaAgenda. 
      * Obtém a resposta, transforma em ByteString.
      * @param args - ByteString: argumentos 
-     * @return - ByteString: resposta
+     * @return ByteString: resposta
      * @throws IOException - gerada pelo método buscarContatos()
      */
-    public ByteString procurarContatos(ByteString args) throws IOException{
-    	Contato contato = Contato.parseFrom(args.toByteArray());
+    public ByteString procurarContatos(ByteString args) {
+    	Contato contato = null;
+		try {
+			contato = Contato.parseFrom(args.toByteArray());
+		} catch (InvalidProtocolBufferException e) {
+			System.out.println("InvalidProtocolBufferException server.AgendaEsqueleto: " + e.getMessage());
+		}
     	
     	Agenda agenda_response = agenda.procurarContato(contato);
 
@@ -68,14 +75,19 @@ public class AgendaEsqueleto {
      * Esqueleto do método editarContato() e chama o método correspondente na classe SistemaAgenda. 
      * Obtém a resposta, transforma em ByteString.
      * @param args - ByteString: argumentos 
-     * @return - ByteString: resposta
+     * @return ByteString: resposta
      * @throws IOException - gerada pelo método editContato()
      */
-    public ByteString editarContato(ByteString args) throws IOException {
+    public ByteString editarContato(ByteString args) {
         //Desserializa
-        Contato contato = Contato.parseFrom(args.toByteArray());
+        Agenda agendaAuxiliar = null;
+		try {
+			agendaAuxiliar = Agenda.parseFrom(args.toByteArray());
+		} catch (InvalidProtocolBufferException e) {
+			System.out.println("InvalidProtocolBufferException server.AgendaEsqueleto: " + e.getMessage());
+		}
 
-        Boolean response = agenda.editarContato(contato);
+        Boolean response = agenda.editarContato(agendaAuxiliar);
 
         return ByteString.copyFrom(response.toString().getBytes());
     }
@@ -87,8 +99,13 @@ public class AgendaEsqueleto {
      * @return - ByteString: resposta
      * @throws IOException - gerada pelo método removerContato()
      */
-    public ByteString removerContato(ByteString args) throws IOException {
-    	Contato contato = Contato.parseFrom(args.toByteArray());
+    public ByteString removerContato(ByteString args) {
+    	Contato contato = null;
+		try {
+			contato = Contato.parseFrom(args.toByteArray());
+		} catch (InvalidProtocolBufferException e) {
+			System.out.println("InvalidProtocolBufferException server.AgendaEsqueleto: " + e.getMessage());
+		}
 
     	Boolean response = agenda.removerContato(contato);
     	
@@ -102,7 +119,7 @@ public class AgendaEsqueleto {
      * @return - ByteString: resposta
      * @throws IOException - gerada pelo método cleanAgenda()
      */
-    public ByteString limparAgenda(ByteString args) throws IOException {
+    public ByteString limparAgenda(ByteString args) {
         Boolean response = agenda.limparAgenda();
         return ByteString.copyFrom(response.toString().getBytes());
     }

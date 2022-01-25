@@ -27,14 +27,11 @@ public class Proxy {
     }
     
     /**
-     * O método realiza a formação da requisição e obtém a resposta através do
-     * método doOperation(). Após obter a resposta faz uma série de transformações
-     * e retorna o resultado
-     * @param contato - objeto Contato do .proto
-     * @return Boolean: true se adicionar, false se já existir contato com o mesmo nome
-     * @throws Exception 
-     * @throws InvalidProtocolBufferException - exceção gerada pela API do Google ao serializar
-     * e transformar em em ByteString
+     * Método para adicionar um contato na agenda. Chama o método doOperation que envia os argumentos
+     * e monta o Message para ser enviado. Recupera a resposta na forma de booleano.
+     * @param contato - objeto Contato para ser adicionado
+     * @return Boolean - true se adicionar, false se já existir contato com o mesmo nome
+     * @throws NullNameException Nome não pode ser vazio
      */
     public Boolean adicionarContato(Contato contato) throws NullNameException {
     	if (contato.getNome().isEmpty()) {
@@ -42,7 +39,7 @@ public class Proxy {
     	}
     	
         //Transformando em ByteString o objeto contato serializado em byte[]
-        ByteString args = ByteString.copyFrom(contato.toByteArray());
+        ByteString args = contato.toByteString();
 
         //Obtendo a resposta
         byte[] resp = doOperation("Agenda", "adicionarContato", args);
@@ -57,16 +54,11 @@ public class Proxy {
     }
 
     /**
-     * O método realiza a formação da requisição e obtém a resposta através do
-     * método doOperation(). Faz a transformação da resposta para ByteString,
-     * transforma para uma agenda e com a agenda é possível obter a uma lista
-     * de contatos.
-     * @return List<Contato> com os contatos
-     * @throws InvalidProtocolBufferException - exceção gerada pela API do Google ao serializar
-     * e transformar em em ByteString
+     * Método para listar os contatos da Agenda. Chama o método doOperation que envia os argumentos
+     * e monta o Message para ser enviado. Recupera a resposta na forma de lista de contatos.
+     * @return List - lista com os contatos da agenda
      */
-    public List<Contato> listarContatos() throws InvalidProtocolBufferException {
-
+    public List<Contato> listarContatos() {
         //Obtendo a resposta
     	byte[] resp = doOperation("Agenda", "listarContatos", ByteString.copyFrom(" ".getBytes()));
 
@@ -74,7 +66,12 @@ public class Proxy {
     	ByteString byteString = ByteString.copyFrom(resp);
     	
         //Transformando a resposta em uma agenda de contatos
-    	Agenda agenda_response = Agenda.parseFrom(byteString);
+    	Agenda agenda_response = null;
+		try {
+			agenda_response = Agenda.parseFrom(byteString);
+		} catch (InvalidProtocolBufferException e) {
+			System.out.println("InvalidProtocolBufferException - client.Proxy: " + e.getMessage());
+		}
     	
         //Obtendo a lista de contatos presente na agenda_response
     	List<Contato> listaContatos = agenda_response.getContatosList(); 
@@ -83,39 +80,41 @@ public class Proxy {
     }
 
     /**
-     * Monta a requisição e obtém a resposta atrável de doOperation().
-     * @param busca - String para ser feita a busca
-     * @return - List<Contato> com os contatos que se encaixam na busca
-     * @throws InvalidProtocolBufferException - exceção gerada pela API do Google ao serializar
-     * e transformar em em ByteString
+     * Método para buscar contatos na Agenda. Chama o método doOperation que envia os argumentos
+     * e monta o Message para ser enviado. Recupera a resposta na forma de lista de contatos.
+     * @param contato - contato com o nome a ser buscado na agenda
+     * @return List - com os contatos que se encaixam na busca
      */
-    public List<Contato> procurarContatos(Contato contato) throws InvalidProtocolBufferException {
+    public List<Contato> procurarContatos(Contato contato) {
         byte[] resp = doOperation("Agenda", "procurarContatos", ByteString.copyFrom(contato.toByteArray()));
 
     	ByteString byteString = ByteString.copyFrom(resp);
     	
-    	Agenda agenda_response = Agenda.parseFrom(byteString);
+    	Agenda agenda_response = null;
+		try {
+			agenda_response = Agenda.parseFrom(byteString);
+		} catch (InvalidProtocolBufferException e) {
+			System.out.println("InvalidProtocolBufferException - client.Proxy: " + e.getMessage());
+		}
     	
     	List<Contato> listaContatos = agenda_response.getContatosList(); 
     	
         return listaContatos;
     }
-
-    // retorna true se conseguir editar, falso caso o contato não exista
+    
     /**
-     * Monta a requisição e obtém a resposta atrável de doOperation(). 
-     * @param contato - objeto Contato do .proto
-     * @return Boolean: true caso a edição tenha sido realiza, false caso
-     * contrário.
-     * @throws InvalidProtocolBufferException - exceção gerada pela API do Google ao serializar
-     * e transformar em em ByteString
+     * Método para editar um contato da Agenda. Chama o método doOperation que envia os argumentos
+     * e monta o Message para ser enviado. Recupera a resposta na forma de booleano.
+     * @param agendaAuxiliar - agenda com o contato na posição 0 como sendo o contato anterior, e na posição 1 como sendo o novo
+     * @return Boolean - true caso a edição tenha sido realizada com sucesso, false caso contrário
+     * @throws NullNameException Nome não pode ser vazio
      */
-    public Boolean editarContato(Contato contato) throws InvalidProtocolBufferException {
-    	if (contato.getNome().isEmpty()) {
+    public Boolean editarContato(Agenda agendaAuxiliar) throws NullNameException {
+    	if (agendaAuxiliar.getContatos(1).getNome().isEmpty()) {
     		throw new NullNameException();
     	}
     	
-        ByteString args = ByteString.copyFrom(contato.toByteArray());
+        ByteString args = agendaAuxiliar.toByteString();
 
         byte[] resp = doOperation("Agenda", "editarContato", args);
 
@@ -127,14 +126,14 @@ public class Proxy {
     }
 
     /**
-     * Monta a requisição e obtém a resposta atrável de doOperation().
-     * @param nome - String com o nome do Contato
-     * @return Boolean: true caso tenha sido removido, false caso contrário
-     * @throws InvalidProtocolBufferException - exceção gerada pela API do Google ao serializar
-     * e transformar em em ByteString
+     * Método para remover um contato da Agenda. Chama o método doOperation que envia os argumentos
+     * e monta o Message para ser enviado. Recupera a resposta na forma de booleano.
+     * @param contato - objeto do contato que será removido da agenda 
+     * @return Boolean - true caso tenha sido removido, false caso contrário
+     * @throws NullNameException Nome não pode ser vazio
      */
-    public Boolean removerContato(Contato contato) throws InvalidProtocolBufferException {
-        ByteString args = ByteString.copyFrom(contato.toByteArray());
+    public Boolean removerContato(Contato contato) {
+        ByteString args = contato.toByteString();
 
         byte[] resp = doOperation("Agenda", "removerContato", args);
         
@@ -145,15 +144,13 @@ public class Proxy {
         return response;
     }
 
-    // limpar os contatos, não retorna nada
     /**
-     * Monta a requisição e obtém a resposta atrável de doOperation().
-     * @return Boolean: true caso tenha sido limpa, false caso contrário
-     * @throws InvalidProtocolBufferException - exceção gerada pela API do Google ao serializar
-     * e transformar em em ByteString
+     * Método para remover todos os contatos da Agenda. Chama o método doOperation que envia os argumentos
+     * e monta o Message para ser enviado. Recupera a resposta na forma de booleano.
+     * @return Boolean - true caso dê certo limpar a agenda, fase caso contrário
      */
-    public Boolean limparAgenda() throws InvalidProtocolBufferException {
-        ByteString args = ByteString.copyFrom(("remove").getBytes());
+    public Boolean limparAgenda() {
+        ByteString args = ByteString.copyFrom(("limparAgenda").getBytes());
         
         byte[] resp = doOperation("Agenda", "limparAgenda", args);
 
@@ -175,48 +172,47 @@ public class Proxy {
      * requisição, o id da requisição, o nome do Objeto referenciado, 
      * o nome do método e os argumentos. Após isso, é serializado com
      * toByteArray().
-     * @param objectRef - A referência para o objeto
-     * @param method - o nome do método
-     * @param args - os argumentos para o método
-     * @return - byte[]: a requisição empacota e serializada.
+     * @param objectRef: A referência para o objeto
+     * @param method: o nome do método
+     * @param args: os argumentos para o método
+     * @return byte[]: a requisição empacotada e serializada.
      */
     public byte[] empacotaMensagem(String objectRef, String method, ByteString args) {
-        Message.Builder message = Message.newBuilder();
-        message.setType(0);  // 0 -> request
-        message.setId(requestId++);
-        message.setObjReference(objectRef);
-        message.setMethodId(method);
-        message.setArgs(args);
+        Message.Builder message = Message.newBuilder()
+	    		.setType(0)
+	    		.setId(requestId++)
+	    		.setObjReference(objectRef)
+	    		.setMethodId(method)
+	    		.setArgs(args);
         return message.build().toByteArray();
     }
 
     /**
-     * O método faz a deserialização da resposta empacotada. 
-     * A deserialização ocorre pelo método parseFrom() que recebe
+     * O método faz a desserialização da resposta empacotada. 
+     * A desserialização ocorre pelo método parseFrom() que recebe
      * o byte[] como argumento e retorna o objeto que estava serializado.
-     * @param resposta - a resposta serializada
-     * @return retorna a resposta empacota
+     * @param resposta: a resposta serializada
+     * @return retorna a resposta empacotada
      */
     public static Message desempacotaMensagem(byte[] resposta) {
     	Message message = null;
 		try {
 			message = Message.parseFrom(resposta);
 		} catch (InvalidProtocolBufferException e) {
-			System.out.println("InvalidProtocolBufferException " + e.getMessage());
+			System.out.println("InvalidProtocolBufferException client.Proxy: " + e.getMessage());
 		}
         return message;
     }
 
     /**
      * O método realiza a montagem da requisição, faz o empacotamento da requisição
-     * e faz o envio para o servidor. Após enviar a requisição seta um time de 1.5 segundos
-     * caso a resposta não seja enviada a tempo é feita uma retransmissão. São feitas no máximo
-     * 10 retransmissões, caso nenhuma tenha obtido a resposta, provavelmente o servidor
-     * esteja morto. 
-     * @param objectRef - referência do objeto para montar a requisição
-     * @param methodId - nome do método para montar a requisição
-     * @param args - argumentos em ByteString 
-     * @return - a resposta em byte[]
+     * e faz o envio para o servidor. Após enviar a requisição caso a resposta não seja
+     * recebida em menos de 1500ms é feita uma retransmissão. São feitas no máximo
+     * 10 retransmissões, caso nenhuma tenha obtido a resposta, paramos de enviar a requisição.
+     * @param objectRef: referência do objeto para montar a requisição
+     * @param methodId: nome do método para montar a requisição
+     * @param args: argumentos em ByteString 
+     * @return a resposta em byte[]
      */
 	public byte[] doOperation(String objectRef, String methodId, ByteString args) {
     	byte[] bytes_request = empacotaMensagem(objectRef, methodId, args);

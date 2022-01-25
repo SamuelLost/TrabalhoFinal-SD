@@ -2,6 +2,6 @@ package exceptions;
 
 public class NullNameException extends RuntimeException {
 	public NullNameException() {
-		super("Nome não pode estar vazio");
+		super("O nome do contato não pode estar vazio");
 	}
 }

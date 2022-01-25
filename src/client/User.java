@@ -16,9 +16,10 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class User {
-    Proxy proxy; // Classe Proxy
-	Scanner scanner = new Scanner(System.in); //Leitura do teclado
+	// Classe Proxy que disponibiliza os métodos
+    Proxy proxy;
 	
+    // Métodos da agenda
 	AdicionarContato adicionarContato;
 	ListarContatos listarContato;
 	ProcurarContatos procurarContatos;
@@ -26,9 +27,10 @@ public class User {
 	RemoverContato removerContato;
 	LimparAgenda limparAgenda;
 	
+	// Leitura do teclado
 	BufferedReader stdin;
     
-    public User(){
+    public User() {
     	stdin = new BufferedReader(new InputStreamReader(System.in));
     	
         proxy = new Proxy(); //Instanciando o objeto Proxy
@@ -56,27 +58,27 @@ public class User {
 		Tela.limpaTela();
 		
 		switch (opt) {
-			case "1": //adicionarContato
+			case "1":
 				opt = "adicionarContato";
 				adicionarContato.adicionaContato();
 				break;
-			case "2": //listarContatos
+			case "2":
 				opt = "listarContatos";
 				listarContato.listarContatos();
 				break;
-			case "3": //procContatos
+			case "3":
 				opt = "procurarContato";
 				procurarContatos.procurarContatos();
 				break;
-			case "4": //editarContato
+			case "4":
 				opt = "editarContato";
 				editarContato.editarContato();
 				break;
-			case "5": //removerContato
+			case "5":
 				opt = "removerContato";
 				removerContato.removerContato();
 				break;
-			case "6": //limparAgenda
+			case "6":
 				opt = "limparAgenda";
 				limparAgenda.limparAgenda();
 				break;
@@ -89,12 +91,14 @@ public class User {
 				System.out.println("Operação inválida. Tente novamente");
 				return opt;
 		}
+
 		System.out.println("Aperte Enter para voltar ao menu...");
 		stdin.readLine();
 		Tela.limpaTela();
+
 		return opt;
     }
-    
+
     public static void main(String[] args) {
         User bookClient = new User();
 		String operacao = "exit";

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.trabalhoFinal.protos.AgendaProto.Agenda;
 import com.trabalhoFinal.protos.AgendaProto.Contato;
 import com.trabalhoFinal.protos.AgendaProto.Contato.Email;
 import com.trabalhoFinal.protos.AgendaProto.Contato.Endereco;
@@ -57,6 +58,8 @@ public class EditarContato {
 		
 		String indice = "";
 		
+		int indexContato = 1;
+		
 		// abc
 		while (true) {
 			indice = stdin.readLine();
@@ -65,14 +68,14 @@ public class EditarContato {
 				System.out.println("Opção inválida! Digite o index do contato que deseja editar: ");
 				continue;
 			}
-			index = Integer.parseInt(indice);
-			if (1 <= index && index <= listaContatos.size()) {
+			indexContato = Integer.parseInt(indice);
+			if (1 <= indexContato && indexContato <= listaContatos.size()) {
 				break;
 			}
 			System.out.println("Opção inválida! Digite o index do contato que deseja editar: ");
 		}
 		
-		index--;
+		indexContato--;
 		
         //Criando o objeto telefone presente no .proto
         Telefone.Builder telefone = Telefone.newBuilder();
@@ -81,15 +84,14 @@ public class EditarContato {
         //Criando o objeto Email presente no .proto
         Email.Builder email = Email.newBuilder();
 		
-		Contato.Builder newContato = Contato.newBuilder(listaContatos.get(index));
+		Contato.Builder newContato = Contato.newBuilder(listaContatos.get(indexContato));
 		String type;
 
-//        System.out.println("Deseja alterar o nome do contato? Se sim, digite um novo nome, se não dê ENTER:");
-//        aux = stdin.readLine();
-//
-//        //Alterando o nome.
-//        if (aux.length() != 0) newContato.setNome(aux);
+        System.out.println("Deseja alterar o nome do contato? Se sim, digite um novo nome, se não dê ENTER:");
+        aux = stdin.readLine();
 
+        //Alterando o nome.
+        if (aux.length() != 0) newContato.setNome(aux);
         
 		while (true) {
 			System.out.println("Deseja adicionar um novo telefone ao contato? Se sim, digite um novo telefone, se não dê ENTER:");
@@ -304,9 +306,13 @@ public class EditarContato {
 			Tela.limpaTela();
 		}
 
+		Agenda.Builder agendaAuxiliar = Agenda.newBuilder();
+		agendaAuxiliar.addContatos(listaContatos.get(indexContato));
+		agendaAuxiliar.addContatos(newContato.build());
+		
 		Boolean res = false;
 		try {
-			res = proxy.editarContato(newContato.build());
+			res = proxy.editarContato(agendaAuxiliar.build());
 			if (res) {
 				System.out.println("Contato editado com sucesso");
 			} else {
